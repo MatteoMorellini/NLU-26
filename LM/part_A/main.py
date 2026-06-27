@@ -23,10 +23,10 @@ class ExperimentConfig:
     name: str
     learning_rate: float
     pos_emb_size: int = 1024
-    d_model: int = 512
+    d_model: int = 20
     n_heads: int = 1
     num_layers: int = 1
-    ff_dim: int = 2048
+    ff_dim: int = 20
     dropout: float = 0.0
     tie_weights: bool = False
     batch_size: int = 64

@@ -31,6 +31,17 @@ class TrainingResult:
     checkpoint_path: Path
 
 
+def compute_language_modeling_loss(
+    criterion: nn.Module,
+    logits: torch.Tensor,
+    labels: torch.Tensor,
+) -> torch.Tensor:
+    """Compute token-level LM loss on flattened logits."""
+
+    vocab_size = logits.size(-1)
+    return criterion(logits.reshape(-1, vocab_size), labels.reshape(-1))
+
+
 def train_loop(
     data: DataLoader[LanguageModelBatch],
     optimizer: Optimizer,
@@ -46,7 +57,7 @@ def train_loop(
     for batch in tqdm(data, desc="Training", unit="batch"):
         optimizer.zero_grad()
         output = model(batch.input_ids)
-        loss = criterion(output.permute(0, 2, 1), batch.labels)
+        loss = compute_language_modeling_loss(criterion, output, batch.labels)
         n_tokens = int(batch.n_tokens.item())
 
         weighted_losses.append(float(loss.item()) * n_tokens)
@@ -71,7 +82,7 @@ def eval_loop(
     with torch.no_grad():
         for batch in tqdm(data, desc="Evaluating", unit="batch"):
             output = model(batch.input_ids)
-            loss = criterion(output.permute(0, 2, 1), batch.labels)
+            loss = compute_language_modeling_loss(criterion, output, batch.labels)
             n_tokens = int(batch.n_tokens.item())
             weighted_losses.append(float(loss.item()) * n_tokens)
             token_counts.append(n_tokens)

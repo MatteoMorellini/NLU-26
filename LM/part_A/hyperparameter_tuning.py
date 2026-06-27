@@ -14,20 +14,25 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
+import torch
+
 
 PART_DIR = Path(__file__).resolve().parent
 os.chdir(PART_DIR)
 
+from functions import count_trainable_parameters  # noqa: E402
 from main import ExperimentConfig, run_experiment  # noqa: E402
+from model import GPT2  # noqa: E402
+from utils import load_tokenizer  # noqa: E402
 
 
 BASE_CONFIG = ExperimentConfig(
     name="baseline",
     learning_rate=5e-4,
     d_model=512,
-    n_heads=1,
+    n_heads=8,
     num_layers=1,
-    ff_dim=1024,
+    ff_dim=2048,
     dropout=0.0,
     n_epochs=100,
     patience=3,
@@ -48,7 +53,7 @@ SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
         {"n_heads": 16},
     ),
     "num_layers": (
-        {"num_layers": 6, "learning_rate": 7e-4},
+        {"num_layers": 6, "learning_rate": 5e-4},
         {"num_layers": 8, "learning_rate": 5e-4},
         {"num_layers": 10, "learning_rate": 3e-4},
     ),
@@ -103,6 +108,23 @@ def config_for_trial(sweep_name: str, trial: dict[str, Any], epochs: int, patien
         n_epochs=epochs,
         patience=patience,
     )
+
+
+def count_trainable_weights(config: ExperimentConfig, vocab_size: int) -> int:
+    """Count trainable weights for a trial config without allocating tensors."""
+
+    with torch.device("meta"):
+        model = GPT2(
+            vocab_size=vocab_size,
+            pos_emb_size=config.pos_emb_size,
+            d_model=config.d_model,
+            n_heads=config.n_heads,
+            num_layers=config.num_layers,
+            ff_dim=config.ff_dim,
+            dropout=config.dropout,
+            tie_weights=config.tie_weights,
+        )
+    return count_trainable_parameters(model)
 
 
 def append_result(output_path: Path, sweep_name: str, config: ExperimentConfig, dev_ppl: float, test_ppl: float) -> None:
@@ -162,6 +184,7 @@ def main() -> None:
 
     args = parse_args()
     selected_sweeps = SWEEPS if args.sweep == "all" else {args.sweep: SWEEPS[args.sweep]}
+    vocab_size = len(load_tokenizer())
 
     for sweep_name, trials in selected_sweeps.items():
         for trial in trials:
@@ -171,6 +194,9 @@ def main() -> None:
                 epochs=args.epochs,
                 patience=args.patience,
             )
+            trainable_weights = count_trainable_weights(config, vocab_size)
+            print(f"Tuning step: {config.name}")
+            print(f"Trainable weights before tuning step: {trainable_weights:,}")
             result = run_experiment(config)
             append_result(
                 output_path=args.output,
