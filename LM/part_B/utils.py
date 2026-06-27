@@ -1,18 +1,14 @@
 """Dataset loading utilities for GPT-2 LoRA fine-tuning on Penn Treebank."""
 
-import os
 import random
 from dataclasses import dataclass
 from pathlib import Path
 
-PART_DIR = Path(__file__).resolve().parent
+from runtime_config import DEFAULT_CACHE_DIR, PART_DIR
+
 DEFAULT_DATASET_DIR = PART_DIR.parent / "part_A" / "dataset" / "PennTreeBank"
-DEFAULT_CACHE_DIR = PART_DIR / "hf_cache"
 IGNORE_INDEX = -100
 PTB_EOS_TOKEN = "<eos>"
-
-os.environ.setdefault("HF_HOME", str(DEFAULT_CACHE_DIR))
-os.environ.setdefault("HF_HUB_CACHE", str(DEFAULT_CACHE_DIR / "hub"))
 
 import torch
 from torch.utils.data import DataLoader, Dataset

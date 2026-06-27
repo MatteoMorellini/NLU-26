@@ -3,6 +3,10 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+from runtime_config import configure_runtime_environment
+
+configure_runtime_environment()
+
 import torch
 from torch import nn
 from torch.optim import AdamW

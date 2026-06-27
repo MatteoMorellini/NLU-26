@@ -1,15 +1,12 @@
 """Reusable Part B GPT-2 LoRA fine-tuning helpers."""
 
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypeAlias
 
+from runtime_config import DEFAULT_CACHE_DIR, PART_DIR
 
-PART_DIR = Path(__file__).resolve().parent
-CACHE_DIR = PART_DIR / "hf_cache"
-os.environ.setdefault("HF_HOME", str(CACHE_DIR))
-os.environ.setdefault("HF_HUB_CACHE", str(CACHE_DIR / "hub"))
+CACHE_DIR = DEFAULT_CACHE_DIR
 
 import torch
 from torch.optim import AdamW
@@ -39,11 +36,11 @@ class ExperimentConfig:
     rank: int
     alpha: float
     learning_rate: float
-    batch_size: int = 4
-    eval_batch_size: int = 8
+    batch_size: int = 64
+    eval_batch_size: int = 128
     max_length: int = 128
-    n_epochs: int = 3
-    patience: int = 2
+    n_epochs: int = 100
+    patience: int = 3
     weight_decay: float = 0.01
     max_grad_norm: float = 1.0
     seed: int = 42

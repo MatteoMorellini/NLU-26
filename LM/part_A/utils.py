@@ -1,18 +1,13 @@
 """Dataset loading and preprocessing utilities for the Penn Treebank LM task."""
 
-import os
 import random
 from dataclasses import dataclass
 from pathlib import Path
 
-PART_DIR = Path(__file__).resolve().parent
-DEFAULT_CACHE_DIR = PART_DIR / "hf_cache"
+from runtime_config import DEFAULT_CACHE_DIR
+
 IGNORE_INDEX = -100
 PTB_EOS_TOKEN = "<eos>"
-
-os.environ.setdefault("HF_HOME", str(DEFAULT_CACHE_DIR))
-os.environ.setdefault("HF_HUB_CACHE", str(DEFAULT_CACHE_DIR / "hub"))
-os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import torch
 from torch.utils.data import DataLoader, Dataset

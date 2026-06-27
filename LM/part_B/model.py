@@ -1,14 +1,9 @@
 """GPT-2 with manually implemented LoRA attention adapters."""
 
-import os
 from pathlib import Path
 from typing import Literal, Optional, Tuple, TypeAlias, Union
 
-PART_DIR = Path(__file__).resolve().parent
-DEFAULT_CACHE_DIR = PART_DIR / "hf_cache"
-
-os.environ.setdefault("HF_HOME", str(DEFAULT_CACHE_DIR))
-os.environ.setdefault("HF_HUB_CACHE", str(DEFAULT_CACHE_DIR / "hub"))
+from runtime_config import DEFAULT_CACHE_DIR
 
 import torch
 from torch import nn
