@@ -1,8 +1,6 @@
-"""Entry point for GPT-2 LoRA fine-tuning experiments."""
+"""Reusable Part B GPT-2 LoRA fine-tuning helpers."""
 
-import csv
 import os
-from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypeAlias
@@ -30,8 +28,6 @@ LoRATargetMode: TypeAlias = Literal["lab", "paper"]
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 CHECKPOINT_DIR = PART_DIR / "bin"
-RESULTS_PATH = CHECKPOINT_DIR / "lora_sweep_results.csv"
-DEFAULT_EXPERIMENT = "lora_r8_a8"
 LORA_INIT_STD = 0.02
 
 
@@ -70,100 +66,12 @@ class ExperimentRunResult:
     checkpoint_path: Path
 
 
-RANK_SWEEP: tuple[int, ...] = (1, 2, 4, 8, 16)
-EXPERIMENTS: tuple[ExperimentConfig, ...] = tuple(
-    ExperimentConfig(
-        name=f"lora_r{rank}_a{rank}",
-        rank=rank,
-        alpha=float(rank),
-        learning_rate=5e-4,
-    )
-    for rank in RANK_SWEEP
-) + tuple(
-    ExperimentConfig(
-        name=f"lora_r{rank}_a{2 * rank}",
-        rank=rank,
-        alpha=float(2 * rank),
-        learning_rate=5e-4,
-    )
-    for rank in RANK_SWEEP
-)
-EXPERIMENTS_BY_NAME = {config.name: config for config in EXPERIMENTS}
-
-
-def parse_args() -> Namespace:
-    """Parse command-line options for selecting the experiment to run."""
-
-    parser = ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--experiment",
-        choices=(*EXPERIMENTS_BY_NAME.keys(), "all"),
-        default=DEFAULT_EXPERIMENT,
-        help="Named experiment to run. Use 'all' for the rank/alpha sweep.",
-    )
-    parser.add_argument(
-        "--model-name",
-        default="openai-community/gpt2",
-        help="Hugging Face model name or local path to use as the GPT-2 base.",
-    )
-    parser.add_argument(
-        "--lora-targets",
-        choices=("lab", "paper"),
-        default="lab",
-        help=(
-            "Use 'lab' for query/key/value adapters, or 'paper' for the "
-            "query/value setup used in the LoRA GPT experiments."
-        ),
-    )
-    return parser.parse_args()
-
-
 def resolve_lora_targets(mode: LoRATargetMode) -> LoRATargets:
     """Map the CLI target mode to concrete GPT-2 attention projections."""
 
     if mode == "paper":
         return "query_value"
     return "query_key_value"
-
-
-def write_results(results: list[ExperimentRunResult], path: Path = RESULTS_PATH) -> None:
-    """Write sweep metrics for report-ready comparison across LoRA hyperparameters."""
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(
-            handle,
-            fieldnames=[
-                "name",
-                "lora_targets",
-                "rank",
-                "alpha",
-                "learning_rate",
-                "pretrained_dev_ppl",
-                "best_dev_ppl",
-                "test_ppl",
-                "total_parameters",
-                "trainable_parameters",
-                "checkpoint_path",
-            ],
-        )
-        writer.writeheader()
-        for result in results:
-            writer.writerow(
-                {
-                    "name": result.name,
-                    "lora_targets": result.lora_targets,
-                    "rank": result.rank,
-                    "alpha": result.alpha,
-                    "learning_rate": result.learning_rate,
-                    "pretrained_dev_ppl": result.pretrained_dev_ppl,
-                    "best_dev_ppl": result.best_dev_ppl,
-                    "test_ppl": result.test_ppl,
-                    "total_parameters": result.total_parameters,
-                    "trainable_parameters": result.trainable_parameters,
-                    "checkpoint_path": str(result.checkpoint_path),
-                }
-            )
 
 
 def run_experiment(
@@ -244,30 +152,3 @@ def run_experiment(
         trainable_parameters=trainable_parameters,
         checkpoint_path=result.checkpoint_path,
     )
-
-
-def main() -> None:
-    """Train the selected LoRA experiment and print final metrics."""
-
-    args = parse_args()
-    lora_targets = resolve_lora_targets(args.lora_targets)
-    selected = (
-        EXPERIMENTS
-        if args.experiment == "all"
-        else (EXPERIMENTS_BY_NAME[args.experiment],)
-    )
-
-    results = [
-        run_experiment(
-            config,
-            model_name=args.model_name,
-            lora_targets=lora_targets,
-        )
-        for config in selected
-    ]
-    write_results(results)
-    print(f"Saved LoRA comparison metrics to: {RESULTS_PATH}")
-
-
-if __name__ == "__main__":
-    main()

@@ -1,8 +1,8 @@
 """Run sequential hyperparameter tuning for Part A.
 
-The search order is d_model -> n_heads -> num_layers -> ff_dim. Each sweep
-starts from the best configuration found by the previous sweep, using best dev
-perplexity as the selection criterion.
+The search order is d_model -> n_heads -> num_layers -> ff_dim -> dropout.
+Each sweep starts from the best configuration found by the previous sweep,
+using best dev perplexity as the selection criterion.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim")
+DEFAULT_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim", "dropout")
 DEFAULT_EPOCHS = 100
 DEFAULT_PATIENCE = 3
 
@@ -111,6 +111,7 @@ def append_summary(
         "n_heads",
         "num_layers",
         "ff_dim",
+        "dropout",
         "learning_rate",
         "seed",
         "best_dev_ppl",
@@ -118,6 +119,17 @@ def append_summary(
     ]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     needs_header = not output_path.exists()
+    if output_path.exists():
+        with output_path.open("r", newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            existing_rows = list(reader)
+            existing_fieldnames = reader.fieldnames
+        if existing_fieldnames != fieldnames:
+            with output_path.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=fieldnames)
+                writer.writeheader()
+                for row in existing_rows:
+                    writer.writerow({field: row.get(field, "") for field in fieldnames})
 
     with output_path.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -132,6 +144,7 @@ def append_summary(
                 "n_heads": config.n_heads,
                 "num_layers": config.num_layers,
                 "ff_dim": config.ff_dim,
+                "dropout": config.dropout,
                 "learning_rate": config.learning_rate,
                 "seed": config.seed,
                 "best_dev_ppl": f"{best_dev_ppl:.4f}",

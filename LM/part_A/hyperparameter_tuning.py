@@ -62,8 +62,14 @@ SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
         {"ff_dim": 2048, "learning_rate": 7e-4},
         {"ff_dim": 3072, "learning_rate": 5e-4},
     ),
+    "dropout": (
+        {"dropout": 0.0},
+        {"dropout": 0.1},
+        {"dropout": 0.2},
+        {"dropout": 0.3},
+    ),
 }
-SEQUENTIAL_SWEEP_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim")
+SEQUENTIAL_SWEEP_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim", "dropout")
 
 
 def parse_args() -> Namespace:
@@ -148,6 +154,7 @@ def append_result(output_path: Path, sweep_name: str, config: ExperimentConfig, 
         "n_heads",
         "num_layers",
         "ff_dim",
+        "dropout",
         "learning_rate",
         "seed",
         "best_dev_ppl",
@@ -182,6 +189,7 @@ def append_result(output_path: Path, sweep_name: str, config: ExperimentConfig, 
                 "n_heads": config.n_heads,
                 "num_layers": config.num_layers,
                 "ff_dim": config.ff_dim,
+                "dropout": config.dropout,
                 "learning_rate": config.learning_rate,
                 "seed": config.seed,
                 "best_dev_ppl": f"{dev_ppl:.4f}",

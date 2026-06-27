@@ -6,25 +6,26 @@ Directory structure:
 - model.py      # Manual LoRA implementation and GPT2_LoRA model
 - utils.py      # Penn Treebank loading, GPT-2 tokenization, and batching
 - functions.py  # Train/eval loops, early stopping, and adapter checkpoints
-- main.py       # Rank/alpha experiment runner and CSV result writer
+- main.py       # Reusable single-configuration LoRA experiment runner
+- hyperparameter_tuning.py  # Rank/alpha sweep and CSV result writer
 - bin/          # Generated LoRA checkpoints and comparison metrics
 
 Run one configuration:
 
 ```bash
-python main.py --experiment lora_r8_a8
+python hyperparameter_tuning.py --experiment lora_r8_a8
 ```
 
 Run one configuration using the paper-style query/value targets:
 
 ```bash
-python main.py --experiment lora_r8_a8 --lora-targets paper
+python hyperparameter_tuning.py --experiment lora_r8_a8 --lora-targets paper
 ```
 
 Run the rank/alpha sweep:
 
 ```bash
-python main.py --experiment all
+python hyperparameter_tuning.py --experiment all
 ```
 
 The script starts from `openai-community/gpt2` pretrained weights, evaluates the frozen
