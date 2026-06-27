@@ -21,7 +21,7 @@ from functions import (
     fit_model,
 )
 from model import GPT_LoRA
-from utils import IGNORE_INDEX, build_dataloaders
+from utils import IGNORE_INDEX, build_dataloaders, set_seed
 
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -45,6 +45,7 @@ class ExperimentConfig:
     patience: int = 2
     weight_decay: float = 0.01
     max_grad_norm: float = 1.0
+    seed: int = 42
 
 
 EXPERIMENTS: tuple[ExperimentConfig, ...] = (
@@ -91,6 +92,7 @@ def parse_args() -> Namespace:
 def run_experiment(config: ExperimentConfig, model_name: str) -> None:
     """Fine-tune and evaluate one LoRA configuration."""
 
+    set_seed(config.seed)
     tokenizer, train_loader, valid_loader, test_loader = build_dataloaders(
         batch_size=config.batch_size,
         eval_batch_size=config.eval_batch_size,
@@ -98,6 +100,7 @@ def run_experiment(config: ExperimentConfig, model_name: str) -> None:
         model_name=model_name,
         max_length=config.max_length,
         cache_dir=CACHE_DIR,
+        seed=config.seed,
     )
     model = GPT_LoRA(
         model_name=model_name,
@@ -123,6 +126,7 @@ def run_experiment(config: ExperimentConfig, model_name: str) -> None:
     print(f"Total parameters: {count_total_parameters(model)}")
     print(f"Trainable LoRA parameters: {count_trainable_parameters(model)}")
     print(f"Hyperparameters: {config}")
+    print(f"Seed: {config.seed}")
 
     result = fit_model(
         model=model,

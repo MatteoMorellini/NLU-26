@@ -1,6 +1,7 @@
 """Dataset loading and preprocessing utilities for the Penn Treebank LM task."""
 
 import os
+import random
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -78,6 +79,23 @@ def read_corpus(path: Path) -> list[str]:
         return [line.strip() for line in handle if line.strip()]
 
 
+def set_seed(seed: int) -> None:
+    """Seed random number generators used by training and dataloading."""
+
+    random.seed(seed)
+    try:
+        import numpy as np
+
+        np.random.seed(seed)
+    except ImportError:
+        pass
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True, warn_only=True)
+
+
 def load_tokenizer() -> PreTrainedTokenizerBase:
     """Load the required GPT-2 BPE tokenizer."""
 
@@ -118,6 +136,7 @@ def build_dataloaders(
     device: torch.device,
     dataset_dir: Path = Path("dataset/PennTreeBank"),
     max_length: int = 1024,
+    seed: int = 42,
 ) -> tuple[PreTrainedTokenizerBase, DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch]]:
     """Load Penn Treebank splits and return tokenizer plus train/dev/test loaders."""
 
@@ -134,9 +153,12 @@ def build_dataloaders(
     def collate(batch: list[list[int]]) -> LanguageModelBatch:
         return collate_language_model_batch(batch, tokenizer.pad_token_id, device)
 
+    generator = torch.Generator()
+    generator.manual_seed(seed)
+
     return (
         tokenizer,
-        DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=collate),
+        DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=collate, generator=generator),
         DataLoader(valid_dataset, batch_size=eval_batch_size, collate_fn=collate),
         DataLoader(test_dataset, batch_size=eval_batch_size, collate_fn=collate),
     )

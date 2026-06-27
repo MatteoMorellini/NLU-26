@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+
+**/hf_cache/
+**/.cache/
+
+**/bin/
+*.pt
+*.pth
+
+*.out
+*.err
+*.sh
+*.csv

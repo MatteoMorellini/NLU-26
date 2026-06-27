@@ -9,7 +9,7 @@ from torch.optim import AdamW
 
 from functions import TrainingResult, count_trainable_parameters, fit_model, initialize_weights
 from model import GPT2
-from utils import IGNORE_INDEX, build_dataloaders
+from utils import IGNORE_INDEX, build_dataloaders, set_seed
 
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,26 +23,29 @@ class ExperimentConfig:
     name: str
     learning_rate: float
     pos_emb_size: int = 1024
-    d_model: int = 32
+    d_model: int = 512
     n_heads: int = 1
     num_layers: int = 1
-    ff_dim: int = 64
+    ff_dim: int = 2048
     dropout: float = 0.0
     tie_weights: bool = False
-    batch_size: int = 512
-    eval_batch_size: int = 1024
+    batch_size: int = 64
+    eval_batch_size: int = 128
     n_epochs: int = 100
     patience: int = 5
+    seed: int = 42
 
 
 def run_experiment(config: ExperimentConfig) -> TrainingResult:
     """Train and evaluate one model configuration."""
 
+    set_seed(config.seed)
     tokenizer, train_loader, valid_loader, test_loader = build_dataloaders(
         batch_size=config.batch_size,
         eval_batch_size=config.eval_batch_size,
         device=DEVICE,
         max_length=config.pos_emb_size,
+        seed=config.seed,
     )
 
     model = GPT2(
@@ -66,6 +69,7 @@ def run_experiment(config: ExperimentConfig) -> TrainingResult:
     print(f"Vocabulary size: {len(tokenizer)}")
     print(f"Trainable parameters: {count_trainable_parameters(model)}")
     print(f"Hyperparameters: {config}")
+    print(f"Seed: {config.seed}")
 
     result = fit_model(
         model=model,
