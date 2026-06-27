@@ -9,6 +9,7 @@ PART_DIR = Path(__file__).resolve().parent
 DEFAULT_DATASET_DIR = PART_DIR.parent / "part_A" / "dataset" / "PennTreeBank"
 DEFAULT_CACHE_DIR = PART_DIR / "hf_cache"
 IGNORE_INDEX = -100
+PTB_EOS_TOKEN = "<eos>"
 
 os.environ.setdefault("HF_HOME", str(DEFAULT_CACHE_DIR))
 os.environ.setdefault("HF_HUB_CACHE", str(DEFAULT_CACHE_DIR / "hub"))
@@ -38,7 +39,7 @@ class LanguageModelBatch:
 
 
 class GPT2PennTreeBankDataset(Dataset[list[int]]):
-    """Penn Treebank split encoded as contiguous GPT-2 token blocks."""
+    """Penn Treebank split encoded as sentence-level GPT-2 token sequences."""
 
     def __init__(
         self,
@@ -46,16 +47,16 @@ class GPT2PennTreeBankDataset(Dataset[list[int]]):
         tokenizer: GPT2TokenizerFast,
         max_length: int,
     ) -> None:
-        self.examples: list[list[int]] = []
-        token_stream: list[int] = []
-        for sentence in corpus:
-            text = f"{sentence.strip()} {tokenizer.eos_token}"
-            token_stream.extend(tokenizer.encode(text, add_special_tokens=False))
-
-        for start in range(0, len(token_stream), max_length):
-            token_ids = token_stream[start : start + max_length]
-            if len(token_ids) >= 2:
-                self.examples.append(token_ids)
+        self.examples = [
+            tokenizer.encode(
+                f"{sentence} {PTB_EOS_TOKEN}",
+                add_special_tokens=False,
+                max_length=max_length,
+                truncation=True,
+            )
+            for sentence in corpus
+        ]
+        self.examples = [example for example in self.examples if len(example) >= 2]
 
     def __len__(self) -> int:
         return len(self.examples)

@@ -12,7 +12,7 @@ import os
 from argparse import ArgumentParser, Namespace
 from dataclasses import replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import torch
 
@@ -30,7 +30,7 @@ BASE_CONFIG = ExperimentConfig(
     name="baseline",
     learning_rate=5e-4,
     d_model=512,
-    n_heads=8,
+    n_heads=1,
     num_layers=1,
     ff_dim=2048,
     dropout=0.0,
@@ -63,6 +63,7 @@ SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
         {"ff_dim": 3072, "learning_rate": 5e-4},
     ),
 }
+SEQUENTIAL_SWEEP_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim")
 
 
 def parse_args() -> Namespace:
@@ -71,9 +72,12 @@ def parse_args() -> Namespace:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument(
         "--sweep",
-        choices=(*SWEEPS.keys(), "all"),
+        choices=(*SWEEPS.keys(), "all", "sequential"),
         default="all",
-        help="Hyperparameter to tune. Use 'all' to run every one-at-a-time sweep.",
+        help=(
+            "Hyperparameter to tune. Use 'all' for independent one-at-a-time "
+            "sweeps, or 'sequential' to carry the best config into the next sweep."
+        ),
     )
     parser.add_argument(
         "--epochs",
@@ -96,13 +100,20 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
-def config_for_trial(sweep_name: str, trial: dict[str, Any], epochs: int, patience: int) -> ExperimentConfig:
+def config_for_trial(
+    sweep_name: str,
+    trial: dict[str, Any],
+    epochs: int,
+    patience: int,
+    base_config: ExperimentConfig = BASE_CONFIG,
+    name_prefix: str = "tune",
+) -> ExperimentConfig:
     """Create a named experiment config for one sweep trial."""
 
     tuned_value = trial[sweep_name]
-    name = f"tune_{sweep_name}_{tuned_value}"
+    name = f"{name_prefix}_{sweep_name}_{tuned_value}"
     return replace(
-        BASE_CONFIG,
+        base_config,
         **trial,
         name=name,
         n_epochs=epochs,
@@ -179,31 +190,102 @@ def append_result(output_path: Path, sweep_name: str, config: ExperimentConfig, 
         )
 
 
+def run_trial(
+    sweep_name: str,
+    trial: dict[str, Any],
+    base_config: ExperimentConfig,
+    args: Namespace,
+    vocab_size: int,
+    name_prefix: str = "tune",
+) -> tuple[ExperimentConfig, float, float]:
+    """Run one trial, persist its metrics, and return config/dev/test results."""
+
+    config = config_for_trial(
+        sweep_name=sweep_name,
+        trial=trial,
+        epochs=args.epochs,
+        patience=args.patience,
+        base_config=base_config,
+        name_prefix=name_prefix,
+    )
+    trainable_weights = count_trainable_weights(config, vocab_size)
+    print(f"Tuning step: {config.name}")
+    print(f"Trainable weights before tuning step: {trainable_weights:,}")
+    result = run_experiment(config)
+    dev_ppl = result.best_dev.perplexity
+    test_ppl = result.test.perplexity
+    append_result(
+        output_path=args.output,
+        sweep_name=sweep_name,
+        config=config,
+        dev_ppl=dev_ppl,
+        test_ppl=test_ppl,
+    )
+    return config, dev_ppl, test_ppl
+
+
+def run_sequential_sweeps(args: Namespace, vocab_size: int) -> ExperimentConfig:
+    """Tune sweeps in order, carrying each best config into the next sweep."""
+
+    current_base = replace(
+        BASE_CONFIG,
+        n_epochs=args.epochs,
+        patience=args.patience,
+    )
+    for step_idx, sweep_name in enumerate(SEQUENTIAL_SWEEP_ORDER, start=1):
+        best_config: Optional[ExperimentConfig] = None
+        best_dev_ppl = float("inf")
+        best_test_ppl = float("inf")
+
+        print(f"Sequential sweep {step_idx}/{len(SEQUENTIAL_SWEEP_ORDER)}: {sweep_name}")
+        print(f"Base config for this sweep: {current_base}")
+
+        for trial in SWEEPS[sweep_name]:
+            config, dev_ppl, test_ppl = run_trial(
+                sweep_name=sweep_name,
+                trial=trial,
+                base_config=current_base,
+                args=args,
+                vocab_size=vocab_size,
+                name_prefix=f"seq{step_idx}",
+            )
+            if dev_ppl < best_dev_ppl:
+                best_config = config
+                best_dev_ppl = dev_ppl
+                best_test_ppl = test_ppl
+
+        if best_config is None:
+            raise RuntimeError(f"No trials were run for sweep {sweep_name}")
+
+        current_base = replace(best_config, name=f"best_after_{sweep_name}")
+        print(
+            f"Best after {sweep_name}: {current_base} "
+            f"dev_ppl={best_dev_ppl:.4f} test_ppl={best_test_ppl:.4f}"
+        )
+
+    return current_base
+
+
 def main() -> None:
     """Run selected one-at-a-time sweeps and write their results."""
 
     args = parse_args()
-    selected_sweeps = SWEEPS if args.sweep == "all" else {args.sweep: SWEEPS[args.sweep]}
     vocab_size = len(load_tokenizer())
 
+    if args.sweep == "sequential":
+        final_config = run_sequential_sweeps(args, vocab_size)
+        print(f"Final selected config: {final_config}")
+        return
+
+    selected_sweeps = SWEEPS if args.sweep == "all" else {args.sweep: SWEEPS[args.sweep]}
     for sweep_name, trials in selected_sweeps.items():
         for trial in trials:
-            config = config_for_trial(
+            run_trial(
                 sweep_name=sweep_name,
                 trial=trial,
-                epochs=args.epochs,
-                patience=args.patience,
-            )
-            trainable_weights = count_trainable_weights(config, vocab_size)
-            print(f"Tuning step: {config.name}")
-            print(f"Trainable weights before tuning step: {trainable_weights:,}")
-            result = run_experiment(config)
-            append_result(
-                output_path=args.output,
-                sweep_name=sweep_name,
-                config=config,
-                dev_ppl=result.best_dev.perplexity,
-                test_ppl=result.test.perplexity,
+                base_config=BASE_CONFIG,
+                args=args,
+                vocab_size=vocab_size,
             )
 
 
