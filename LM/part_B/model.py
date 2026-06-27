@@ -1,9 +1,8 @@
 """GPT-2 with manually implemented LoRA attention adapters."""
 
-import math
 import os
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Literal, Optional, Tuple, TypeAlias, Union
 
 PART_DIR = Path(__file__).resolve().parent
 DEFAULT_CACHE_DIR = PART_DIR / "hf_cache"
@@ -16,6 +15,42 @@ from torch import nn
 from transformers import GPT2Config, GPT2LMHeadModel
 from transformers.models.gpt2.modeling_gpt2 import GPT2Attention
 
+LoRATargets: TypeAlias = Literal["query_value", "query_key_value"]
+
+
+class LoRALinearUpdate(nn.Module):
+    """Low-rank update BA from the LoRA paper, scaled by alpha / rank."""
+
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        rank: int,
+        alpha: float,
+        init_std: float = 0.02,
+    ) -> None:
+        super().__init__()
+        if rank <= 0:
+            raise ValueError("LoRA rank must be a positive integer")
+
+        self.rank = rank
+        self.alpha = alpha
+        self.scaling = alpha / rank
+        self.lora_a = nn.Linear(in_features, rank, bias=False)
+        self.lora_b = nn.Linear(rank, out_features, bias=False)
+        self.reset_parameters(init_std=init_std)
+
+    def reset_parameters(self, init_std: float) -> None:
+        """Initialize A with a Gaussian and B with zeros so BA starts as zero."""
+
+        nn.init.normal_(self.lora_a.weight, mean=0.0, std=init_std)
+        nn.init.zeros_(self.lora_b.weight)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Return the scaled LoRA update for one frozen projection."""
+
+        return self.lora_b(self.lora_a(x)) * self.scaling
+
 
 class CustomGPT2Attention(GPT2Attention):
     """GPT-2 attention layer with trainable LoRA adapters on query, key, and value."""
@@ -25,7 +60,8 @@ class CustomGPT2Attention(GPT2Attention):
         config: GPT2Config,
         rank: int = 8,
         alpha: float = 16.0,
-        lora_dropout: float = 0.0,
+        lora_init_std: float = 0.02,
+        lora_targets: LoRATargets = "query_key_value",
         is_cross_attention: bool = False,
         layer_idx: int | None = None,
     ) -> None:
@@ -39,58 +75,54 @@ class CustomGPT2Attention(GPT2Attention):
 
         self.rank = rank
         self.alpha = alpha
-        self.scaling = alpha / rank
-        self.lora_dropout = nn.Dropout(lora_dropout)
-        self.lora_query_a = nn.Linear(self.embed_dim, rank, bias=False)
-        self.lora_query_b = nn.Linear(rank, self.embed_dim, bias=False)
-        self.lora_key_a = nn.Linear(self.embed_dim, rank, bias=False)
-        self.lora_key_b = nn.Linear(rank, self.embed_dim, bias=False)
-        self.lora_value_a = nn.Linear(self.embed_dim, rank, bias=False)
-        self.lora_value_b = nn.Linear(rank, self.embed_dim, bias=False)
-        self.reset_lora_parameters()
+        self.lora_init_std = lora_init_std
+        self.lora_targets = lora_targets
+        self.lora_query = LoRALinearUpdate(
+            in_features=self.embed_dim,
+            out_features=self.embed_dim,
+            rank=rank,
+            alpha=alpha,
+            init_std=lora_init_std,
+        )
+        self.lora_key: LoRALinearUpdate | None = None
+        if lora_targets == "query_key_value":
+            self.lora_key = LoRALinearUpdate(
+                in_features=self.embed_dim,
+                out_features=self.embed_dim,
+                rank=rank,
+                alpha=alpha,
+                init_std=lora_init_std,
+            )
+        self.lora_value = LoRALinearUpdate(
+            in_features=self.embed_dim,
+            out_features=self.embed_dim,
+            rank=rank,
+            alpha=alpha,
+            init_std=lora_init_std,
+        )
 
     def reset_lora_parameters(self) -> None:
-        """Initialize LoRA with random down-projections and zero up-projections."""
+        """Reset all LoRA adapters to the paper's zero-start update."""
 
-        for down_projection in (
-            self.lora_query_a,
-            self.lora_key_a,
-            self.lora_value_a,
-        ):
-            nn.init.kaiming_uniform_(down_projection.weight, a=math.sqrt(5))
-        for up_projection in (
-            self.lora_query_b,
-            self.lora_key_b,
-            self.lora_value_b,
-        ):
-            nn.init.zeros_(up_projection.weight)
+        modules = [self.lora_query, self.lora_value]
+        if self.lora_key is not None:
+            modules.append(self.lora_key)
+
+        for module in modules:
+            module.reset_parameters(init_std=self.lora_init_std)
 
     def enable_lora_training(self) -> None:
         """Freeze pretrained attention weights and leave only LoRA adapters trainable."""
 
         for parameter in self.parameters():
             parameter.requires_grad = False
-        for module in (
-            self.lora_query_a,
-            self.lora_query_b,
-            self.lora_key_a,
-            self.lora_key_b,
-            self.lora_value_a,
-            self.lora_value_b,
-        ):
+        trainable_modules = [self.lora_query, self.lora_value]
+        if self.lora_key is not None:
+            trainable_modules.append(self.lora_key)
+
+        for module in trainable_modules:
             for parameter in module.parameters():
                 parameter.requires_grad = True
-
-    def _lora_update(
-        self,
-        hidden_states: torch.Tensor,
-        down_projection: nn.Linear,
-        up_projection: nn.Linear,
-    ) -> torch.Tensor:
-        """Return the scaled low-rank update for one attention projection."""
-
-        dropped = self.lora_dropout(hidden_states)
-        return up_projection(down_projection(dropped)) * self.scaling
 
     def forward(
         self,
@@ -114,39 +146,17 @@ class CustomGPT2Attention(GPT2Attention):
 
             query = self.q_attn(hidden_states)
             key, value = self.c_attn(encoder_hidden_states).split(self.split_size, dim=2)
-            query = query + self._lora_update(
-                hidden_states,
-                self.lora_query_a,
-                self.lora_query_b,
-            )
-            key = key + self._lora_update(
-                encoder_hidden_states,
-                self.lora_key_a,
-                self.lora_key_b,
-            )
-            value = value + self._lora_update(
-                encoder_hidden_states,
-                self.lora_value_a,
-                self.lora_value_b,
-            )
+            query = query + self.lora_query(hidden_states)
+            if self.lora_key is not None:
+                key = key + self.lora_key(encoder_hidden_states)
+            value = value + self.lora_value(encoder_hidden_states)
             attention_mask = encoder_attention_mask
         else:
             query, key, value = self.c_attn(hidden_states).split(self.split_size, dim=2)
-            query = query + self._lora_update(
-                hidden_states,
-                self.lora_query_a,
-                self.lora_query_b,
-            )
-            key = key + self._lora_update(
-                hidden_states,
-                self.lora_key_a,
-                self.lora_key_b,
-            )
-            value = value + self._lora_update(
-                hidden_states,
-                self.lora_value_a,
-                self.lora_value_b,
-            )
+            query = query + self.lora_query(hidden_states)
+            if self.lora_key is not None:
+                key = key + self.lora_key(hidden_states)
+            value = value + self.lora_value(hidden_states)
 
         query = self._split_heads(query, self.num_heads, self.head_dim)
         key = self._split_heads(key, self.num_heads, self.head_dim)
@@ -195,17 +205,20 @@ class GPT2_LoRA(GPT2LMHeadModel):
         config: GPT2Config,
         rank: int = 8,
         alpha: float = 16.0,
-        lora_dropout: float = 0.0,
+        lora_init_std: float = 0.02,
+        lora_targets: LoRATargets = "query_key_value",
     ) -> None:
         super().__init__(config)
         self.rank = rank
         self.alpha = alpha
-        self.lora_dropout = lora_dropout
+        self.lora_init_std = lora_init_std
+        self.lora_targets = lora_targets
         self._replace_attention_layers(
             config=config,
             rank=rank,
             alpha=alpha,
-            lora_dropout=lora_dropout,
+            lora_init_std=lora_init_std,
+            lora_targets=lora_targets,
         )
         self._freeze_base_model()
 
@@ -214,7 +227,8 @@ class GPT2_LoRA(GPT2LMHeadModel):
         config: GPT2Config,
         rank: int,
         alpha: float,
-        lora_dropout: float,
+        lora_init_std: float,
+        lora_targets: LoRATargets,
     ) -> None:
         """Replace each pretrained attention module with a LoRA-aware subclass."""
 
@@ -224,7 +238,8 @@ class GPT2_LoRA(GPT2LMHeadModel):
                 config=config,
                 rank=rank,
                 alpha=alpha,
-                lora_dropout=lora_dropout,
+                lora_init_std=lora_init_std,
+                lora_targets=lora_targets,
                 is_cross_attention=getattr(old_attention, "is_cross_attention", False),
                 layer_idx=getattr(old_attention, "layer_idx", None),
             )
@@ -240,6 +255,14 @@ class GPT2_LoRA(GPT2LMHeadModel):
             if isinstance(module, CustomGPT2Attention):
                 module.enable_lora_training()
 
+    def reset_lora_parameters(self) -> None:
+        """Reset all LoRA adapters after loading pretrained GPT-2 weights."""
+
+        for module in self.modules():
+            if isinstance(module, CustomGPT2Attention):
+                module.reset_lora_parameters()
+        self._freeze_base_model()
+
     def lora_state_dict(self) -> dict[str, torch.Tensor]:
         """Return only trainable LoRA parameters for compact checkpointing."""
 
@@ -254,7 +277,8 @@ def load_gpt2_lora(
     model_name: str = "openai-community/gpt2",
     rank: int = 8,
     alpha: float = 16.0,
-    lora_dropout: float = 0.0,
+    lora_init_std: float = 0.02,
+    lora_targets: LoRATargets = "query_key_value",
     cache_dir: Path | str = DEFAULT_CACHE_DIR,
 ) -> GPT2_LoRA:
     """Load pretrained GPT-2 weights into the manual LoRA model."""
@@ -265,10 +289,12 @@ def load_gpt2_lora(
         model_name,
         rank=rank,
         alpha=alpha,
-        lora_dropout=lora_dropout,
+        lora_init_std=lora_init_std,
+        lora_targets=lora_targets,
         cache_dir=cache_path,
     )
     model.config.use_cache = False
+    model.reset_lora_parameters()
     return model
 
 
