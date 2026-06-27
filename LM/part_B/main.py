@@ -12,7 +12,6 @@ os.environ.setdefault("HF_HOME", str(CACHE_DIR))
 os.environ.setdefault("HF_HUB_CACHE", str(CACHE_DIR / "hub"))
 
 import torch
-from torch import nn
 from torch.optim import AdamW
 
 from functions import (
@@ -20,8 +19,8 @@ from functions import (
     count_trainable_parameters,
     fit_model,
 )
-from model import GPT_LoRA
-from utils import IGNORE_INDEX, build_dataloaders, set_seed
+from model import load_gpt2_lora
+from utils import build_dataloaders, set_seed
 
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -37,7 +36,7 @@ class ExperimentConfig:
     rank: int
     alpha: float
     learning_rate: float
-    dropout: float = 0.05
+    dropout: float = 0.0
     batch_size: int = 4
     eval_batch_size: int = 8
     max_length: int = 128
@@ -83,7 +82,7 @@ def parse_args() -> Namespace:
     )
     parser.add_argument(
         "--model-name",
-        default="gpt2",
+        default="openai-community/gpt2",
         help="Hugging Face model name or local path to use as the GPT-2 base.",
     )
     return parser.parse_args()
@@ -102,16 +101,15 @@ def run_experiment(config: ExperimentConfig, model_name: str) -> None:
         cache_dir=CACHE_DIR,
         seed=config.seed,
     )
-    model = GPT_LoRA(
+    model = load_gpt2_lora(
         model_name=model_name,
         rank=config.rank,
         alpha=config.alpha,
-        dropout=config.dropout,
+        lora_dropout=config.dropout,
         cache_dir=CACHE_DIR,
     ).to(DEVICE)
-    model.gpt2.config.pad_token_id = tokenizer.pad_token_id
+    model.config.pad_token_id = tokenizer.pad_token_id
 
-    criterion = nn.CrossEntropyLoss(ignore_index=IGNORE_INDEX)
     optimizer = AdamW(
         (parameter for parameter in model.parameters() if parameter.requires_grad),
         lr=config.learning_rate,
@@ -134,7 +132,6 @@ def run_experiment(config: ExperimentConfig, model_name: str) -> None:
         valid_loader=valid_loader,
         test_loader=test_loader,
         optimizer=optimizer,
-        criterion=criterion,
         checkpoint_path=checkpoint_path,
         n_epochs=config.n_epochs,
         patience=config.patience,

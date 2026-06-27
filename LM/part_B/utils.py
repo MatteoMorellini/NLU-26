@@ -30,7 +30,7 @@ class DatasetPaths:
 
 @dataclass(frozen=True)
 class LanguageModelBatch:
-    """A padded causal language-modeling batch."""
+    """A padded causal language-modeling batch for Hugging Face GPT-2."""
 
     input_ids: torch.Tensor
     labels: torch.Tensor
@@ -118,7 +118,7 @@ def collate_language_model_batch(
     pad_token_id: int,
     device: torch.device,
 ) -> LanguageModelBatch:
-    """Pad encoded sentences and create shifted GPT-style inputs and labels."""
+    """Pad encoded sentences and create labels consumed by GPT2LMHeadModel."""
 
     lengths = [len(sentence) for sentence in batch]
     max_len = max(lengths)
@@ -131,12 +131,10 @@ def collate_language_model_batch(
     for row, length in enumerate(lengths):
         full_attention_mask[row, :length] = 1
 
-    input_ids = token_ids[:, :-1]
-    labels = token_ids[:, 1:]
-    attention_mask = full_attention_mask[:, :-1]
-    label_mask = full_attention_mask[:, 1:]
-    labels = labels.masked_fill(label_mask == 0, IGNORE_INDEX)
-    n_tokens = torch.sum(label_mask)
+    input_ids = token_ids
+    attention_mask = full_attention_mask
+    labels = token_ids.masked_fill(attention_mask == 0, IGNORE_INDEX)
+    n_tokens = torch.sum(attention_mask[:, 1:])
     return LanguageModelBatch(
         input_ids=input_ids,
         labels=labels,
@@ -175,9 +173,12 @@ def build_dataloaders(
         tokenizer,
         max_length=max_length,
     )
+    pad_token_id = tokenizer.pad_token_id
+    if pad_token_id is None:
+        raise RuntimeError("GPT-2 tokenizer must have a pad token before collation.")
 
     def collate(batch: list[list[int]]) -> LanguageModelBatch:
-        return collate_language_model_batch(batch, tokenizer.pad_token_id, device)
+        return collate_language_model_batch(batch, pad_token_id, device)
 
     generator = torch.Generator()
     generator.manual_seed(seed)

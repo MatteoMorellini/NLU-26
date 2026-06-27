@@ -78,14 +78,21 @@ def load_trainable_state_dict(
         parameters[name].data.copy_(saved_parameter.to(parameters[name].device))
 
 
+def _require_loss(loss: torch.Tensor | None) -> torch.Tensor:
+    """Return the model-computed loss or fail if labels were not provided."""
+
+    if loss is None:
+        raise RuntimeError("GPT-2 did not return a loss. Pass labels to the model.")
+    return loss
+
+
 def train_loop(
     data: DataLoader[LanguageModelBatch],
     optimizer: Optimizer,
-    criterion: nn.Module,
     model: nn.Module,
     max_grad_norm: float | None = 1.0,
 ) -> float:
-    """Run one training epoch and return token-normalized loss."""
+    """Run one training epoch using GPT2LMHeadModel's internal shifted loss."""
 
     model.train()
     weighted_losses: list[float] = []
@@ -93,8 +100,12 @@ def train_loop(
 
     for batch in tqdm(data, desc="Training", unit="batch"):
         optimizer.zero_grad()
-        logits = model(batch.input_ids, attention_mask=batch.attention_mask)
-        loss = criterion(logits.permute(0, 2, 1), batch.labels)
+        output = model(
+            input_ids=batch.input_ids,
+            attention_mask=batch.attention_mask,
+            labels=batch.labels,
+        )
+        loss = _require_loss(output.loss)
         n_tokens = int(batch.n_tokens.item())
 
         weighted_losses.append(float(loss.item()) * n_tokens)
@@ -109,10 +120,9 @@ def train_loop(
 
 def eval_loop(
     data: DataLoader[LanguageModelBatch],
-    criterion: nn.Module,
     model: nn.Module,
 ) -> EvaluationResult:
-    """Evaluate a model and return loss plus perplexity."""
+    """Evaluate a model with GPT2LMHeadModel's internal shifted loss."""
 
     model.eval()
     weighted_losses: list[float] = []
@@ -120,8 +130,12 @@ def eval_loop(
 
     with torch.no_grad():
         for batch in tqdm(data, desc="Evaluating", unit="batch"):
-            logits = model(batch.input_ids, attention_mask=batch.attention_mask)
-            loss = criterion(logits.permute(0, 2, 1), batch.labels)
+            output = model(
+                input_ids=batch.input_ids,
+                attention_mask=batch.attention_mask,
+                labels=batch.labels,
+            )
+            loss = _require_loss(output.loss)
             n_tokens = int(batch.n_tokens.item())
             weighted_losses.append(float(loss.item()) * n_tokens)
             token_counts.append(n_tokens)
@@ -136,7 +150,6 @@ def fit_model(
     valid_loader: DataLoader[LanguageModelBatch],
     test_loader: DataLoader[LanguageModelBatch],
     optimizer: Optimizer,
-    criterion: nn.Module,
     checkpoint_path: Path | str,
     n_epochs: int,
     patience: int,
@@ -154,11 +167,10 @@ def fit_model(
         train_loss = train_loop(
             train_loader,
             optimizer,
-            criterion,
             model,
             max_grad_norm=max_grad_norm,
         )
-        dev_result = eval_loop(valid_loader, criterion, model)
+        dev_result = eval_loop(valid_loader, model)
         print(
             f"epoch={epoch} train_loss={train_loss:.4f} "
             f"dev_loss={dev_result.loss:.4f} dev_ppl={dev_result.perplexity:.2f}"
@@ -177,7 +189,7 @@ def fit_model(
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(best_state, checkpoint_path)
     load_trainable_state_dict(model, best_state)
-    test_result = eval_loop(test_loader, criterion, model)
+    test_result = eval_loop(test_loader, model)
     return TrainingResult(
         best_dev=best_dev,
         test=test_result,
