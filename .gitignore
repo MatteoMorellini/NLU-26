@@ -8,4 +8,4 @@ __pycache__/
 *.pt
 *.pth
 
-LM/part_A/dataset/PennTreeBank/tiny-imagenet-200.zip*
+NLU/part_A/dataset/
