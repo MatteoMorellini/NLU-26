@@ -17,14 +17,6 @@ DEFAULT_EXPERIMENT = "lora_r8_a8"
 RANK_SWEEP: tuple[int, ...] = (1, 2, 4, 8, 16)
 EXPERIMENT_SPECS: tuple[dict[str, Any], ...] = tuple(
     {
-        "name": f"lora_r{rank}_a{rank}",
-        "rank": rank,
-        "alpha": float(rank),
-        "learning_rate": 5e-4,
-    }
-    for rank in RANK_SWEEP
-) + tuple(
-    {
         "name": f"lora_r{rank}_a{2 * rank}",
         "rank": rank,
         "alpha": float(2 * rank),

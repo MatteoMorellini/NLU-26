@@ -12,7 +12,7 @@ PTB_EOS_TOKEN = "<eos>"
 
 import torch
 from torch.utils.data import DataLoader, Dataset
-from transformers import GPT2TokenizerFast
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 
 @dataclass(frozen=True)
@@ -40,7 +40,7 @@ class GPT2PennTreeBankDataset(Dataset[list[int]]):
     def __init__(
         self,
         corpus: list[str],
-        tokenizer: GPT2TokenizerFast,
+        tokenizer: PreTrainedTokenizerBase,
         max_length: int,
     ) -> None:
         self.examples = [
@@ -98,11 +98,11 @@ def set_seed(seed: int) -> None:
 def load_gpt2_tokenizer(
     model_name: str = "gpt2",
     cache_dir: Path = DEFAULT_CACHE_DIR,
-) -> GPT2TokenizerFast:
+) -> PreTrainedTokenizerBase:
     """Load GPT-2 tokenizer and set EOS as the padding token."""
 
     cache_dir.mkdir(parents=True, exist_ok=True)
-    tokenizer = GPT2TokenizerFast.from_pretrained(model_name, cache_dir=cache_dir)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
@@ -148,7 +148,7 @@ def build_dataloaders(
     max_length: int = 128,
     cache_dir: Path = DEFAULT_CACHE_DIR,
     seed: int = 42,
-) -> tuple[GPT2TokenizerFast, DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch]]:
+) -> tuple[PreTrainedTokenizerBase, DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch]]:
     """Load PTB splits and return tokenizer plus train/dev/test loaders."""
 
     paths = get_dataset_paths(dataset_dir)
