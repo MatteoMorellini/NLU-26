@@ -26,7 +26,7 @@ from model import GPT2  # noqa: E402
 from utils import load_tokenizer  # noqa: E402
 
 
-BASE_CONFIG = ExperimentConfig(
+"""BASE_CONFIG = ExperimentConfig(
     name="baseline",
     learning_rate=3e-4,
     d_model=512,
@@ -37,8 +37,31 @@ BASE_CONFIG = ExperimentConfig(
     n_epochs=100,
     patience=3,
     seed=42,
+)"""
+
+BASE_CONFIG = ExperimentConfig(
+    name="baseline",
+    learning_rate=3e-4,
+    d_model=512,
+    n_heads=8,
+    num_layers=10,
+    ff_dim=2048,
+    dropout=0.0,
+    n_epochs=100,
+    patience=3,
+    seed=42,
 )
 
+SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
+    "dropout":(
+        {"dropout": 0.3},
+    )
+}
+
+SEQUENTIAL_SWEEP_ORDER = ("dropout",)
+
+
+"""
 SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
     # "d_model": (
     #     {"d_model": 256, "ff_dim": 1024, "learning_rate": 8e-4},
@@ -90,7 +113,9 @@ SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
         {"warmup_steps": 500},
     ),
 }
+
 SEQUENTIAL_SWEEP_ORDER = ("weight_decay", "lr_schedule", "warmup_steps")
+"""
 
 
 def parse_args() -> Namespace:

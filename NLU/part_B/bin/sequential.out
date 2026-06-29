@@ -16,6 +16,148 @@ gpt2 | learning_rate=5e-05 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
 gpt2 learning_rate=5e-05 | dev slot F1=0.9661 | dev intent acc=0.9900 | test slot F1=0.9234
 Best after learning_rate: 3e-05 (dev slot F1=0.9667, dev intent acc=0.9940)
 
-Step 2: sweeping batch_size
+Step 2: sweeping dropout
 
-gpt2 | batch_size=8 | seed=42 | lr=3e-05 batch=8 dropout=0.1 wd=0.01
+gpt2 | dropout=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.0 wd=0.01
+gpt2 dropout=0.0 | dev slot F1=0.9646 | dev intent acc=0.9920 | test slot F1=0.9223
+
+gpt2 | dropout=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+gpt2 dropout=0.1 | dev slot F1=0.9667 | dev intent acc=0.9940 | test slot F1=0.9263
+
+gpt2 | dropout=0.2 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+gpt2 dropout=0.2 | dev slot F1=0.9643 | dev intent acc=0.9920 | test slot F1=0.9283
+
+gpt2 | dropout=0.3 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.01
+gpt2 dropout=0.3 | dev slot F1=0.9650 | dev intent acc=0.9920 | test slot F1=0.9282
+Best after dropout: 0.1 (dev slot F1=0.9667, dev intent acc=0.9940)
+
+Step 3: sweeping weight_decay
+
+gpt2 | weight_decay=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 weight_decay=0.0 | dev slot F1=0.9673 | dev intent acc=0.9940 | test slot F1=0.9273
+
+gpt2 | weight_decay=0.01 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+gpt2 weight_decay=0.01 | dev slot F1=0.9667 | dev intent acc=0.9940 | test slot F1=0.9263
+
+gpt2 | weight_decay=0.05 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.05
+gpt2 weight_decay=0.05 | dev slot F1=0.9667 | dev intent acc=0.9920 | test slot F1=0.9282
+
+gpt2 | weight_decay=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.1
+gpt2 weight_decay=0.1 | dev slot F1=0.9670 | dev intent acc=0.9920 | test slot F1=0.9264
+Best after weight_decay: 0.0 (dev slot F1=0.9673, dev intent acc=0.9940)
+
+Step 4: sweeping warmup_ratio
+
+gpt2 | warmup_ratio=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 warmup_ratio=0.0 | dev slot F1=0.9655 | dev intent acc=0.9920 | test slot F1=0.9258
+
+gpt2 | warmup_ratio=0.06 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 warmup_ratio=0.06 | dev slot F1=0.9650 | dev intent acc=0.9900 | test slot F1=0.9246
+
+gpt2 | warmup_ratio=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 warmup_ratio=0.1 | dev slot F1=0.9673 | dev intent acc=0.9940 | test slot F1=0.9273
+Best after warmup_ratio: 0.1 (dev slot F1=0.9673, dev intent acc=0.9940)
+
+Step 5: sweeping slot_loss_weight
+
+gpt2 | slot_loss_weight=0.75 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 slot_loss_weight=0.75 | dev slot F1=0.9679 | dev intent acc=0.9940 | test slot F1=0.9302
+
+gpt2 | slot_loss_weight=1.0 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 slot_loss_weight=1.0 | dev slot F1=0.9673 | dev intent acc=0.9940 | test slot F1=0.9273
+
+gpt2 | slot_loss_weight=1.5 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 slot_loss_weight=1.5 | dev slot F1=0.9679 | dev intent acc=0.9920 | test slot F1=0.9224
+
+gpt2 | slot_loss_weight=2.0 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 slot_loss_weight=2.0 | dev slot F1=0.9652 | dev intent acc=0.9920 | test slot F1=0.9221
+Best after slot_loss_weight: 0.75 (dev slot F1=0.9679, dev intent acc=0.9940)
+
+Step 6: sweeping max_length
+
+gpt2 | max_length=64 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 max_length=64 | dev slot F1=0.9679 | dev intent acc=0.9940 | test slot F1=0.9302
+
+gpt2 | max_length=128 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.0
+gpt2 max_length=128 | dev slot F1=0.9679 | dev intent acc=0.9940 | test slot F1=0.9302
+Best after max_length: 64 (dev slot F1=0.9679, dev intent acc=0.9940)
+
+Final config for gpt2: FineTuningConfig(dataset_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_A/dataset/ATIS'), output_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_B/bin'), max_length=64, batch_size=64, eval_batch_size=128, epochs=100, patience=3, learning_rate=3e-05, seed=42, dropout=0.1, intent_loss_weight=1.0, slot_loss_weight=0.75, warmup_ratio=0.1, weight_decay=0.0)
+
+Starting sequential tuning for gpt2-medium (gpt2-medium)
+
+Step 1: sweeping learning_rate
+
+gpt2-medium | learning_rate=1e-05 | seed=42 | lr=1e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium learning_rate=1e-05 | dev slot F1=0.9669 | dev intent acc=0.9920 | test slot F1=0.9210
+
+gpt2-medium | learning_rate=2e-05 | seed=42 | lr=2e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium learning_rate=2e-05 | dev slot F1=0.9652 | dev intent acc=0.9920 | test slot F1=0.9202
+
+gpt2-medium | learning_rate=3e-05 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium learning_rate=3e-05 | dev slot F1=0.9690 | dev intent acc=0.9940 | test slot F1=0.9324
+
+gpt2-medium | learning_rate=5e-05 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium learning_rate=5e-05 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+Best after learning_rate: 5e-05 (dev slot F1=0.9723, dev intent acc=0.9920)
+
+Step 2: sweeping dropout
+
+gpt2-medium | dropout=0.0 | seed=42 | lr=5e-05 batch=64 dropout=0.0 wd=0.01
+gpt2-medium dropout=0.0 | dev slot F1=0.9690 | dev intent acc=0.9940 | test slot F1=0.9237
+
+gpt2-medium | dropout=0.1 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium dropout=0.1 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+
+gpt2-medium | dropout=0.2 | seed=42 | lr=5e-05 batch=64 dropout=0.2 wd=0.01
+gpt2-medium dropout=0.2 | dev slot F1=0.9707 | dev intent acc=0.9940 | test slot F1=0.9253
+
+gpt2-medium | dropout=0.3 | seed=42 | lr=5e-05 batch=64 dropout=0.3 wd=0.01
+gpt2-medium dropout=0.3 | dev slot F1=0.9675 | dev intent acc=0.9940 | test slot F1=0.9272
+Best after dropout: 0.1 (dev slot F1=0.9723, dev intent acc=0.9920)
+
+Step 3: sweeping weight_decay
+
+gpt2-medium | weight_decay=0.0 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.0
+gpt2-medium weight_decay=0.0 | dev slot F1=0.9678 | dev intent acc=0.9920 | test slot F1=0.9305
+
+gpt2-medium | weight_decay=0.01 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium weight_decay=0.01 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+
+gpt2-medium | weight_decay=0.05 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.05
+gpt2-medium weight_decay=0.05 | dev slot F1=0.9699 | dev intent acc=0.9960 | test slot F1=0.9286
+
+gpt2-medium | weight_decay=0.1 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.1
+gpt2-medium weight_decay=0.1 | dev slot F1=0.9719 | dev intent acc=0.9920 | test slot F1=0.9343
+Best after weight_decay: 0.01 (dev slot F1=0.9723, dev intent acc=0.9920)
+
+Step 4: sweeping warmup_ratio
+
+gpt2-medium | warmup_ratio=0.0 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium warmup_ratio=0.0 | dev slot F1=0.9690 | dev intent acc=0.9940 | test slot F1=0.9274
+
+gpt2-medium | warmup_ratio=0.06 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium warmup_ratio=0.06 | dev slot F1=0.9693 | dev intent acc=0.9900 | test slot F1=0.9280
+
+gpt2-medium | warmup_ratio=0.1 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium warmup_ratio=0.1 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+Best after warmup_ratio: 0.1 (dev slot F1=0.9723, dev intent acc=0.9920)
+
+Step 5: sweeping slot_loss_weight
+
+gpt2-medium | slot_loss_weight=0.75 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium slot_loss_weight=0.75 | dev slot F1=0.9693 | dev intent acc=0.9960 | test slot F1=0.9232
+
+gpt2-medium | slot_loss_weight=1.0 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium slot_loss_weight=1.0 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+
+gpt2-medium | slot_loss_weight=1.5 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium slot_loss_weight=1.5 | dev slot F1=0.9693 | dev intent acc=0.9960 | test slot F1=0.9310
+
+gpt2-medium | slot_loss_weight=2.0 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium slot_loss_weight=2.0 | dev slot F1=0.9643 | dev intent acc=0.9920 | test slot F1=0.9191
+Best after slot_loss_weight: 1.0 (dev slot F1=0.9723, dev intent acc=0.9920)
+
+Step 6: sweeping max_length
+
+gpt2-medium | max_length=64 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01

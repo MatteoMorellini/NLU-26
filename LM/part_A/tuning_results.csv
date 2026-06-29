@@ -63,3 +63,15 @@ warmup_steps,seq3_warmup_steps_50,512,8,10,3072,0.3,False,0.1,linear,50,,0.0003,
 warmup_steps,seq3_warmup_steps_100,512,8,10,3072,0.3,False,0.1,linear,100,,0.0003,42,34.4856,30.8662
 warmup_steps,seq3_warmup_steps_200,512,8,10,3072,0.3,False,0.1,linear,200,,0.0003,42,34.7913,30.8790
 warmup_steps,seq3_warmup_steps_500,512,8,10,3072,0.3,False,0.1,linear,500,,0.0003,42,34.8204,31.0280
+learning_rate,seq1_learning_rate_0.5,20,1,1,20,0.0,False,0.0,none,0,,0.5,42,407821.4046,259454.3284
+learning_rate,seq1_learning_rate_0.01,20,1,1,20,0.0,False,0.0,none,0,,0.01,42,52.4251,45.6140
+learning_rate,seq1_learning_rate_0.005,20,1,1,20,0.0,False,0.0,none,0,,0.005,42,51.9856,45.5109
+learning_rate,seq1_learning_rate_0.001,20,1,1,20,0.0,False,0.0,none,0,,0.001,42,52.5580,45.9121
+learning_rate,seq1_learning_rate_0.0005,20,1,1,20,0.0,False,0.0,none,0,,0.0005,42,52.7641,45.9483
+learning_rate,seq1_learning_rate_0.0001,20,1,1,20,0.0,False,0.0,none,0,,0.0001,42,55.7953,48.9051
+ff_dim,seq1_ff_dim_1024,512,8,10,1024,0.0,False,0.0,none,0,,0.0003,42,36.8779,33.2061
+learning_rate,seq1_learning_rate_5e-05,20,1,1,20,0.0,False,0.0,none,0,,5e-05,42,56.5820,49.5340
+ff_dim,seq1_ff_dim_2048,512,8,10,2048,0.0,False,0.0,none,0,,0.0003,42,36.7263,33.0573
+learning_rate,seq1_learning_rate_1e-05,20,1,1,20,0.0,False,0.0,none,0,,1e-05,42,87.6588,77.0198
+ff_dim,seq1_ff_dim_3072,512,8,10,3072,0.0,False,0.0,none,0,,0.0003,42,36.6523,33.0456
+ff_dim,seq1_ff_dim_4096,512,8,10,4096,0.0,False,0.0,none,0,,0.0003,42,37.0586,33.3258

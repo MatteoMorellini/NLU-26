@@ -47,7 +47,6 @@ MODEL_CHOICES = ("gpt2", "gpt2-medium", "bert-base", "bert-large")
 DEFAULT_MODELS = MODEL_CHOICES
 DEFAULT_SWEEP_ORDER = (
     "learning_rate",
-    "batch_size",
     "dropout",
     "weight_decay",
     "warmup_ratio",
@@ -56,7 +55,6 @@ DEFAULT_SWEEP_ORDER = (
 )
 SWEEPS: dict[str, list[Any]] = {
     "learning_rate": [1e-5, 2e-5, 3e-5, 5e-5],
-    "batch_size": [8, 16, 32],
     "dropout": [0.0, 0.1, 0.2, 0.3],
     "weight_decay": [0.0, 0.01, 0.05, 0.1],
     "warmup_ratio": [0.0, 0.06, 0.1],
