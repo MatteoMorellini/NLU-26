@@ -161,3 +161,180 @@ Best after slot_loss_weight: 1.0 (dev slot F1=0.9723, dev intent acc=0.9920)
 Step 6: sweeping max_length
 
 gpt2-medium | max_length=64 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium max_length=64 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+
+gpt2-medium | max_length=128 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2-medium max_length=128 | dev slot F1=0.9723 | dev intent acc=0.9920 | test slot F1=0.9251
+Best after max_length: 64 (dev slot F1=0.9723, dev intent acc=0.9920)
+
+Final config for gpt2-medium: FineTuningConfig(dataset_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_A/dataset/ATIS'), output_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_B/bin'), max_length=64, batch_size=64, eval_batch_size=128, epochs=100, patience=3, learning_rate=5e-05, seed=42, dropout=0.1, intent_loss_weight=1.0, slot_loss_weight=1.0, warmup_ratio=0.1, weight_decay=0.01)
+
+Starting sequential tuning for bert-base (bert-base-uncased)
+
+Step 1: sweeping learning_rate
+
+bert-base | learning_rate=1e-05 | seed=42 | lr=1e-05 batch=64 dropout=0.1 wd=0.01
+bert-base learning_rate=1e-05 | dev slot F1=0.9814 | dev intent acc=0.9940 | test slot F1=0.9510
+
+bert-base | learning_rate=2e-05 | seed=42 | lr=2e-05 batch=64 dropout=0.1 wd=0.01
+bert-base learning_rate=2e-05 | dev slot F1=0.9843 | dev intent acc=0.9920 | test slot F1=0.9553
+
+bert-base | learning_rate=3e-05 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+bert-base learning_rate=3e-05 | dev slot F1=0.9864 | dev intent acc=0.9900 | test slot F1=0.9566
+
+bert-base | learning_rate=5e-05 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+bert-base learning_rate=5e-05 | dev slot F1=0.9852 | dev intent acc=0.9920 | test slot F1=0.9562
+Best after learning_rate: 3e-05 (dev slot F1=0.9864, dev intent acc=0.9900)
+
+Step 2: sweeping dropout
+
+bert-base | dropout=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.0 wd=0.01
+bert-base dropout=0.0 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9573
+
+bert-base | dropout=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+bert-base dropout=0.1 | dev slot F1=0.9864 | dev intent acc=0.9900 | test slot F1=0.9566
+
+bert-base | dropout=0.2 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base dropout=0.2 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9567
+
+bert-base | dropout=0.3 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.01
+bert-base dropout=0.3 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9581
+Best after dropout: 0.2 (dev slot F1=0.9876, dev intent acc=0.9920)
+
+Step 3: sweeping weight_decay
+
+bert-base | weight_decay=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.0
+bert-base weight_decay=0.0 | dev slot F1=0.9837 | dev intent acc=0.9900 | test slot F1=0.9510
+
+bert-base | weight_decay=0.01 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base weight_decay=0.01 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9567
+
+bert-base | weight_decay=0.05 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.05
+bert-base weight_decay=0.05 | dev slot F1=0.9858 | dev intent acc=0.9920 | test slot F1=0.9587
+
+bert-base | weight_decay=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.1
+bert-base weight_decay=0.1 | dev slot F1=0.9864 | dev intent acc=0.9900 | test slot F1=0.9592
+Best after weight_decay: 0.01 (dev slot F1=0.9876, dev intent acc=0.9920)
+
+Step 4: sweeping warmup_ratio
+
+bert-base | warmup_ratio=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base warmup_ratio=0.0 | dev slot F1=0.9855 | dev intent acc=0.9920 | test slot F1=0.9564
+
+bert-base | warmup_ratio=0.06 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base warmup_ratio=0.06 | dev slot F1=0.9817 | dev intent acc=0.9920 | test slot F1=0.9504
+
+bert-base | warmup_ratio=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base warmup_ratio=0.1 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9567
+Best after warmup_ratio: 0.1 (dev slot F1=0.9876, dev intent acc=0.9920)
+
+Step 5: sweeping slot_loss_weight
+
+bert-base | slot_loss_weight=0.75 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base slot_loss_weight=0.75 | dev slot F1=0.9847 | dev intent acc=0.9900 | test slot F1=0.9557
+
+bert-base | slot_loss_weight=1.0 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base slot_loss_weight=1.0 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9567
+
+bert-base | slot_loss_weight=1.5 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base slot_loss_weight=1.5 | dev slot F1=0.9861 | dev intent acc=0.9920 | test slot F1=0.9563
+
+bert-base | slot_loss_weight=2.0 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base slot_loss_weight=2.0 | dev slot F1=0.9852 | dev intent acc=0.9940 | test slot F1=0.9550
+Best after slot_loss_weight: 1.0 (dev slot F1=0.9876, dev intent acc=0.9920)
+
+Step 6: sweeping max_length
+
+bert-base | max_length=64 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base max_length=64 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9567
+
+bert-base | max_length=128 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-base max_length=128 | dev slot F1=0.9876 | dev intent acc=0.9920 | test slot F1=0.9567
+Best after max_length: 64 (dev slot F1=0.9876, dev intent acc=0.9920)
+
+Final config for bert-base: FineTuningConfig(dataset_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_A/dataset/ATIS'), output_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_B/bin'), max_length=64, batch_size=64, eval_batch_size=128, epochs=100, patience=3, learning_rate=3e-05, seed=42, dropout=0.2, intent_loss_weight=1.0, slot_loss_weight=1.0, warmup_ratio=0.1, weight_decay=0.01)
+
+Starting sequential tuning for bert-large (bert-large-uncased)
+
+Step 1: sweeping learning_rate
+
+bert-large | learning_rate=1e-05 | seed=42 | lr=1e-05 batch=64 dropout=0.1 wd=0.01
+bert-large learning_rate=1e-05 | dev slot F1=0.9841 | dev intent acc=0.9940 | test slot F1=0.9560
+
+bert-large | learning_rate=2e-05 | seed=42 | lr=2e-05 batch=64 dropout=0.1 wd=0.01
+bert-large learning_rate=2e-05 | dev slot F1=0.9852 | dev intent acc=0.9920 | test slot F1=0.9566
+
+bert-large | learning_rate=3e-05 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+bert-large learning_rate=3e-05 | dev slot F1=0.9858 | dev intent acc=0.9920 | test slot F1=0.9566
+
+bert-large | learning_rate=5e-05 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+bert-large learning_rate=5e-05 | dev slot F1=0.9846 | dev intent acc=0.9920 | test slot F1=0.9592
+Best after learning_rate: 3e-05 (dev slot F1=0.9858, dev intent acc=0.9920)
+
+Step 2: sweeping dropout
+
+bert-large | dropout=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.0 wd=0.01
+bert-large dropout=0.0 | dev slot F1=0.9841 | dev intent acc=0.9920 | test slot F1=0.9594
+
+bert-large | dropout=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+bert-large dropout=0.1 | dev slot F1=0.9858 | dev intent acc=0.9920 | test slot F1=0.9566
+
+bert-large | dropout=0.2 | seed=42 | lr=3e-05 batch=64 dropout=0.2 wd=0.01
+bert-large dropout=0.2 | dev slot F1=0.9838 | dev intent acc=0.9920 | test slot F1=0.9566
+
+bert-large | dropout=0.3 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.01
+bert-large dropout=0.3 | dev slot F1=0.9870 | dev intent acc=0.9900 | test slot F1=0.9592
+Best after dropout: 0.3 (dev slot F1=0.9870, dev intent acc=0.9900)
+
+Step 3: sweeping weight_decay
+
+bert-large | weight_decay=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.0
+bert-large weight_decay=0.0 | dev slot F1=0.9838 | dev intent acc=0.9920 | test slot F1=0.9568
+
+bert-large | weight_decay=0.01 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.01
+bert-large weight_decay=0.01 | dev slot F1=0.9870 | dev intent acc=0.9900 | test slot F1=0.9592
+
+bert-large | weight_decay=0.05 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large weight_decay=0.05 | dev slot F1=0.9873 | dev intent acc=0.9880 | test slot F1=0.9584
+
+bert-large | weight_decay=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.1
+bert-large weight_decay=0.1 | dev slot F1=0.9847 | dev intent acc=0.9920 | test slot F1=0.9587
+Best after weight_decay: 0.05 (dev slot F1=0.9873, dev intent acc=0.9880)
+
+Step 4: sweeping warmup_ratio
+
+bert-large | warmup_ratio=0.0 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large warmup_ratio=0.0 | dev slot F1=0.9844 | dev intent acc=0.9940 | test slot F1=0.9592
+
+bert-large | warmup_ratio=0.06 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large warmup_ratio=0.06 | dev slot F1=0.9858 | dev intent acc=0.9920 | test slot F1=0.9567
+
+bert-large | warmup_ratio=0.1 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large warmup_ratio=0.1 | dev slot F1=0.9873 | dev intent acc=0.9880 | test slot F1=0.9584
+Best after warmup_ratio: 0.1 (dev slot F1=0.9873, dev intent acc=0.9880)
+
+Step 5: sweeping slot_loss_weight
+
+bert-large | slot_loss_weight=0.75 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large slot_loss_weight=0.75 | dev slot F1=0.9855 | dev intent acc=0.9960 | test slot F1=0.9595
+
+bert-large | slot_loss_weight=1.0 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large slot_loss_weight=1.0 | dev slot F1=0.9873 | dev intent acc=0.9880 | test slot F1=0.9584
+
+bert-large | slot_loss_weight=1.5 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large slot_loss_weight=1.5 | dev slot F1=0.9849 | dev intent acc=0.9920 | test slot F1=0.9583
+
+bert-large | slot_loss_weight=2.0 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large slot_loss_weight=2.0 | dev slot F1=0.9820 | dev intent acc=0.9940 | test slot F1=0.9564
+Best after slot_loss_weight: 1.0 (dev slot F1=0.9873, dev intent acc=0.9880)
+
+Step 6: sweeping max_length
+
+bert-large | max_length=64 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large max_length=64 | dev slot F1=0.9873 | dev intent acc=0.9880 | test slot F1=0.9584
+
+bert-large | max_length=128 | seed=42 | lr=3e-05 batch=64 dropout=0.3 wd=0.05
+bert-large max_length=128 | dev slot F1=0.9873 | dev intent acc=0.9880 | test slot F1=0.9584
+Best after max_length: 64 (dev slot F1=0.9873, dev intent acc=0.9880)
+
+Final config for bert-large: FineTuningConfig(dataset_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_A/dataset/ATIS'), output_dir=PosixPath('/home/matteo.morellini/NLU-26/NLU/part_B/bin'), max_length=64, batch_size=64, eval_batch_size=128, epochs=100, patience=3, learning_rate=3e-05, seed=42, dropout=0.3, intent_loss_weight=1.0, slot_loss_weight=1.0, warmup_ratio=0.1, weight_decay=0.05)

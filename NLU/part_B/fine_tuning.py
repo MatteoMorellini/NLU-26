@@ -18,9 +18,11 @@ Run examples:
 from __future__ import annotations
 
 import argparse
+import csv
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
+from statistics import mean
 
 os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
@@ -45,6 +47,7 @@ from utils import (
 
 BERT_LARGE_MODEL = "bert-large-uncased"
 GPT2_MEDIUM_MODEL = "gpt2-medium"
+DEFAULT_RUN_SEEDS = (42, 101, 27)
 
 
 @dataclass(frozen=True)
@@ -86,6 +89,41 @@ def checkpoint_name(model_type: ModelType, pretrained_model_name: str) -> str:
 
     safe_model_name = pretrained_model_name.replace("/", "_")
     return f"best_{model_type}_{safe_model_name}.pt"
+
+
+def average_results(results: list[ExperimentResult]) -> dict[str, str]:
+    """Average metrics from repeated seed runs for one pretrained model."""
+
+    if not results:
+        raise ValueError("Cannot average an empty result list")
+
+    best_result = max(results, key=lambda result: (result.best_dev_slot_f1, result.best_dev_intent_accuracy))
+    return {
+        "model_type": best_result.model_type,
+        "pretrained_model_name": best_result.pretrained_model_name,
+        "runs": str(len(results)),
+        "seeds": ",".join(str(result.seed) for result in results),
+        "learning_rate": f"{best_result.learning_rate:g}",
+        "best_dev_slot_f1_mean": f"{mean(result.best_dev_slot_f1 for result in results):.4f}",
+        "best_dev_intent_accuracy_mean": f"{mean(result.best_dev_intent_accuracy for result in results):.4f}",
+        "test_slot_f1_mean": f"{mean(result.test_slot_f1 for result in results):.4f}",
+        "test_intent_accuracy_mean": f"{mean(result.test_intent_accuracy for result in results):.4f}",
+        "epochs_ran_mean": f"{mean(result.epochs_ran for result in results):.2f}",
+        "best_checkpoint_path": best_result.checkpoint_path,
+    }
+
+
+def write_averaged_results(rows: list[dict[str, str]], output_path: str | Path) -> None:
+    """Write model-level averaged metrics to CSV."""
+
+    if not rows:
+        return
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def fine_tune_model(
@@ -176,7 +214,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--patience", type=int, default=3)
     parser.add_argument("--lr", type=float, default=5e-5)
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=42, help="Seed used for the fixed train/dev split.")
+    parser.add_argument("--seeds", type=int, nargs="+", default=list(DEFAULT_RUN_SEEDS), help="Training seeds to average.")
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--intent-loss-weight", type=float, default=1.0)
     parser.add_argument("--slot-loss-weight", type=float, default=1.0)
@@ -210,19 +249,34 @@ def main() -> None:
     label_vocab = build_label_vocab(splits)
 
     results: list[ExperimentResult] = []
+    averaged_results: list[dict[str, str]] = []
     for model_type, pretrained_model_name in selected_models(args):
-        result = fine_tune_model(model_type, pretrained_model_name, splits, label_vocab, config)
-        results.append(result)
+        model_results: list[ExperimentResult] = []
+        for seed in args.seeds:
+            run_config = replace(config, seed=seed, output_dir=config.output_dir / f"seed_{seed}")
+            result = fine_tune_model(model_type, pretrained_model_name, splits, label_vocab, run_config)
+            results.append(result)
+            model_results.append(result)
+            print(
+                f"{model_type.upper()} ({pretrained_model_name}) seed={seed} | "
+                f"dev slot F1: {result.best_dev_slot_f1:.4f} | "
+                f"dev intent acc: {result.best_dev_intent_accuracy:.4f} | "
+                f"test slot F1: {result.test_slot_f1:.4f} | "
+                f"test intent acc: {result.test_intent_accuracy:.4f}"
+            )
+        averages = average_results(model_results)
+        averaged_results.append(averages)
         print(
-            f"{model_type.upper()} ({pretrained_model_name}) | "
-            f"dev slot F1: {result.best_dev_slot_f1:.4f} | "
-            f"dev intent acc: {result.best_dev_intent_accuracy:.4f} | "
-            f"test slot F1: {result.test_slot_f1:.4f} | "
-            f"test intent acc: {result.test_intent_accuracy:.4f}"
+            f"{model_type.upper()} ({pretrained_model_name}) averaged over seeds {averages['seeds']} | "
+            f"dev slot F1: {averages['best_dev_slot_f1_mean']} | "
+            f"dev intent acc: {averages['best_dev_intent_accuracy_mean']} | "
+            f"test slot F1: {averages['test_slot_f1_mean']} | "
+            f"test intent acc: {averages['test_intent_accuracy_mean']}"
         )
 
     config.output_dir.mkdir(parents=True, exist_ok=True)
     write_experiment_results(results, config.output_dir / "part_b_fine_tuning_results.csv")
+    write_averaged_results(averaged_results, config.output_dir / "part_b_fine_tuning_averages.csv")
 
 
 if __name__ == "__main__":
