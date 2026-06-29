@@ -1,0 +1,864 @@
+
+Sequential tuning step 1: d_model
+Starting from config: ExperimentConfig(name='seq_baseline', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=1, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning trial: seq_d_model_256
+Trainable weights before tuning trial: 26,834,257
+Experiment: seq_d_model_256
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 26834257
+Hyperparameters: ExperimentConfig(name='seq_d_model_256', learning_rate=0.0008, pos_emb_size=1024, d_model=256, n_heads=1, num_layers=1, ff_dim=1024, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.5664 dev_loss=4.0070 dev_ppl=54.98
+epoch=2 train_loss=3.7239 dev_loss=3.7722 dev_ppl=43.48
+epoch=3 train_loss=3.4476 dev_loss=3.6817 dev_ppl=39.72
+epoch=4 train_loss=3.2522 dev_loss=3.6733 dev_ppl=39.38
+epoch=5 train_loss=3.0919 dev_loss=3.6622 dev_ppl=38.95
+epoch=6 train_loss=2.9450 dev_loss=3.7068 dev_ppl=40.72
+epoch=7 train_loss=2.8075 dev_loss=3.7618 dev_ppl=43.03
+epoch=8 train_loss=2.6771 dev_loss=3.8294 dev_ppl=46.03
+Best dev ppl: 38.95
+Test ppl: 34.78
+Saved best model to: bin/seq_d_model_256.pt
+Tuning trial: seq_d_model_384
+Trainable weights before tuning trial: 40,816,081
+Experiment: seq_d_model_384
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 40816081
+Hyperparameters: ExperimentConfig(name='seq_d_model_384', learning_rate=0.0006, pos_emb_size=1024, d_model=384, n_heads=1, num_layers=1, ff_dim=1536, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.5014 dev_loss=3.9691 dev_ppl=52.94
+epoch=2 train_loss=3.6758 dev_loss=3.7479 dev_ppl=42.43
+epoch=3 train_loss=3.3931 dev_loss=3.6614 dev_ppl=38.92
+epoch=4 train_loss=3.1870 dev_loss=3.6578 dev_ppl=38.78
+epoch=5 train_loss=3.0091 dev_loss=3.6605 dev_ppl=38.88
+epoch=6 train_loss=2.8401 dev_loss=3.7267 dev_ppl=41.54
+epoch=7 train_loss=2.6760 dev_loss=3.8049 dev_ppl=44.92
+Best dev ppl: 38.78
+Test ppl: 34.86
+Saved best model to: bin/seq_d_model_384.pt
+Tuning trial: seq_d_model_512
+Trainable weights before tuning trial: 55,191,121
+Experiment: seq_d_model_512
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 55191121
+Hyperparameters: ExperimentConfig(name='seq_d_model_512', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=1, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.4604 dev_loss=3.9431 dev_ppl=51.58
+epoch=2 train_loss=3.6445 dev_loss=3.7195 dev_ppl=41.24
+epoch=3 train_loss=3.3570 dev_loss=3.6415 dev_ppl=38.15
+epoch=4 train_loss=3.1406 dev_loss=3.6415 dev_ppl=38.15
+epoch=5 train_loss=2.9491 dev_loss=3.6666 dev_ppl=39.12
+epoch=6 train_loss=2.7616 dev_loss=3.7341 dev_ppl=41.85
+Best dev ppl: 38.15
+Test ppl: 34.35
+Saved best model to: bin/seq_d_model_512.pt
+Tuning trial: seq_d_model_768
+Trainable weights before tuning trial: 85,120,849
+Experiment: seq_d_model_768
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 85120849
+Hyperparameters: ExperimentConfig(name='seq_d_model_768', learning_rate=0.0005, pos_emb_size=1024, d_model=768, n_heads=1, num_layers=1, ff_dim=3072, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.4169 dev_loss=3.9387 dev_ppl=51.35
+epoch=2 train_loss=3.6439 dev_loss=3.7213 dev_ppl=41.32
+epoch=3 train_loss=3.3535 dev_loss=3.6464 dev_ppl=38.33
+epoch=4 train_loss=3.1276 dev_loss=3.6442 dev_ppl=38.25
+epoch=5 train_loss=2.9175 dev_loss=3.6701 dev_ppl=39.25
+epoch=6 train_loss=2.7043 dev_loss=3.7563 dev_ppl=42.79
+epoch=7 train_loss=2.4791 dev_loss=3.8778 dev_ppl=48.32
+Best dev ppl: 38.25
+Test ppl: 34.44
+Saved best model to: bin/seq_d_model_768.pt
+Best after d_model: seq_d_model_512 dev_ppl=38.15 test_ppl=34.35
+
+Sequential tuning step 2: n_heads
+Starting from config: ExperimentConfig(name='seq_d_model_512', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=1, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning trial: seq_n_heads_2
+Trainable weights before tuning trial: 55,191,121
+Experiment: seq_n_heads_2
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 55191121
+Hyperparameters: ExperimentConfig(name='seq_n_heads_2', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=2, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.4582 dev_loss=3.9281 dev_ppl=50.81
+epoch=2 train_loss=3.6277 dev_loss=3.6990 dev_ppl=40.41
+epoch=3 train_loss=3.3322 dev_loss=3.6191 dev_ppl=37.30
+epoch=4 train_loss=3.1090 dev_loss=3.6233 dev_ppl=37.46
+epoch=5 train_loss=2.9081 dev_loss=3.6489 dev_ppl=38.43
+epoch=6 train_loss=2.7096 dev_loss=3.7284 dev_ppl=41.61
+Best dev ppl: 37.30
+Test ppl: 33.73
+Saved best model to: bin/seq_n_heads_2.pt
+Tuning trial: seq_n_heads_4
+Trainable weights before tuning trial: 55,191,121
+Experiment: seq_n_heads_4
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 55191121
+Hyperparameters: ExperimentConfig(name='seq_n_heads_4', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=4, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.4572 dev_loss=3.9220 dev_ppl=50.50
+epoch=2 train_loss=3.6214 dev_loss=3.6932 dev_ppl=40.17
+epoch=3 train_loss=3.3229 dev_loss=3.6133 dev_ppl=37.09
+epoch=4 train_loss=3.0971 dev_loss=3.6251 dev_ppl=37.53
+epoch=5 train_loss=2.8922 dev_loss=3.6544 dev_ppl=38.65
+epoch=6 train_loss=2.6853 dev_loss=3.7469 dev_ppl=42.39
+Best dev ppl: 37.09
+Test ppl: 33.54
+Saved best model to: bin/seq_n_heads_4.pt
+Tuning trial: seq_n_heads_8
+Trainable weights before tuning trial: 55,191,121
+Experiment: seq_n_heads_8
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 55191121
+Hyperparameters: ExperimentConfig(name='seq_n_heads_8', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.4563 dev_loss=3.9215 dev_ppl=50.48
+epoch=2 train_loss=3.6180 dev_loss=3.6871 dev_ppl=39.93
+epoch=3 train_loss=3.3167 dev_loss=3.6112 dev_ppl=37.01
+epoch=4 train_loss=3.0890 dev_loss=3.6250 dev_ppl=37.52
+epoch=5 train_loss=2.8808 dev_loss=3.6616 dev_ppl=38.92
+epoch=6 train_loss=2.6673 dev_loss=3.7528 dev_ppl=42.64
+Best dev ppl: 37.01
+Test ppl: 33.52
+Saved best model to: bin/seq_n_heads_8.pt
+Tuning trial: seq_n_heads_16
+Trainable weights before tuning trial: 55,191,121
+Experiment: seq_n_heads_16
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 55191121
+Hyperparameters: ExperimentConfig(name='seq_n_heads_16', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=16, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.4612 dev_loss=3.9252 dev_ppl=50.66
+epoch=2 train_loss=3.6212 dev_loss=3.6900 dev_ppl=40.04
+epoch=3 train_loss=3.3159 dev_loss=3.6139 dev_ppl=37.11
+epoch=4 train_loss=3.0849 dev_loss=3.6265 dev_ppl=37.58
+epoch=5 train_loss=2.8707 dev_loss=3.6739 dev_ppl=39.41
+epoch=6 train_loss=2.6494 dev_loss=3.7759 dev_ppl=43.64
+Best dev ppl: 37.11
+Test ppl: 33.60
+Saved best model to: bin/seq_n_heads_16.pt
+Best after n_heads: seq_n_heads_8 dev_ppl=37.01 test_ppl=33.52
+
+Sequential tuning step 3: num_layers
+Starting from config: ExperimentConfig(name='seq_n_heads_8', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=1, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning trial: seq_num_layers_6
+Trainable weights before tuning trial: 70,953,041
+Experiment: seq_num_layers_6
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 70953041
+Hyperparameters: ExperimentConfig(name='seq_num_layers_6', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=6, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.7558 dev_loss=4.1608 dev_ppl=64.12
+epoch=2 train_loss=3.8716 dev_loss=3.8372 dev_ppl=46.40
+epoch=3 train_loss=3.5432 dev_loss=3.7009 dev_ppl=40.49
+epoch=4 train_loss=3.3168 dev_loss=3.6466 dev_ppl=38.34
+epoch=5 train_loss=3.1314 dev_loss=3.6203 dev_ppl=37.35
+epoch=6 train_loss=2.9585 dev_loss=3.6483 dev_ppl=38.41
+epoch=7 train_loss=2.7891 dev_loss=3.7021 dev_ppl=40.53
+epoch=8 train_loss=2.6133 dev_loss=3.7735 dev_ppl=43.53
+Best dev ppl: 37.35
+Test ppl: 33.55
+Saved best model to: bin/seq_num_layers_6.pt
+Tuning trial: seq_num_layers_8
+Trainable weights before tuning trial: 77,257,809
+Experiment: seq_num_layers_8
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 77257809
+Hyperparameters: ExperimentConfig(name='seq_num_layers_8', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=8, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.8452 dev_loss=4.2546 dev_ppl=70.43
+epoch=2 train_loss=3.9743 dev_loss=3.9275 dev_ppl=50.78
+epoch=3 train_loss=3.6578 dev_loss=3.7805 dev_ppl=43.84
+epoch=4 train_loss=3.4521 dev_loss=3.7049 dev_ppl=40.64
+epoch=5 train_loss=3.2894 dev_loss=3.6579 dev_ppl=38.78
+epoch=6 train_loss=3.1423 dev_loss=3.6434 dev_ppl=38.22
+epoch=7 train_loss=3.0032 dev_loss=3.6606 dev_ppl=38.89
+epoch=8 train_loss=2.8602 dev_loss=3.6907 dev_ppl=40.07
+epoch=9 train_loss=2.7113 dev_loss=3.7426 dev_ppl=42.21
+Best dev ppl: 38.22
+Test ppl: 34.41
+Saved best model to: bin/seq_num_layers_8.pt
+Tuning trial: seq_num_layers_10
+Trainable weights before tuning trial: 83,562,577
+Experiment: seq_num_layers_10
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 83562577
+Hyperparameters: ExperimentConfig(name='seq_num_layers_10', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.8641 dev_loss=4.1995 dev_ppl=66.65
+epoch=2 train_loss=3.8990 dev_loss=3.8572 dev_ppl=47.33
+epoch=3 train_loss=3.5509 dev_loss=3.6952 dev_ppl=40.25
+epoch=4 train_loss=3.3067 dev_loss=3.6252 dev_ppl=37.53
+epoch=5 train_loss=3.1058 dev_loss=3.6006 dev_ppl=36.62
+epoch=6 train_loss=2.9141 dev_loss=3.6334 dev_ppl=37.84
+epoch=7 train_loss=2.7226 dev_loss=3.6922 dev_ppl=40.13
+epoch=8 train_loss=2.5211 dev_loss=3.7740 dev_ppl=43.55
+Best dev ppl: 36.62
+Test ppl: 32.90
+Saved best model to: bin/seq_num_layers_10.pt
+Best after num_layers: seq_num_layers_10 dev_ppl=36.62 test_ppl=32.90
+
+Sequential tuning step 4: ff_dim
+Starting from config: ExperimentConfig(name='seq_num_layers_10', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning trial: seq_ff_dim_1024
+Trainable weights before tuning trial: 73,066,577
+Experiment: seq_ff_dim_1024
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 73066577
+Hyperparameters: ExperimentConfig(name='seq_ff_dim_1024', learning_rate=0.0008, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=1024, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.1750 dev_loss=4.6177 dev_ppl=101.26
+epoch=2 train_loss=4.3510 dev_loss=4.2495 dev_ppl=70.07
+epoch=3 train_loss=4.0472 dev_loss=4.1124 dev_ppl=61.09
+epoch=4 train_loss=3.9861 dev_loss=4.3080 dev_ppl=74.30
+epoch=5 train_loss=3.9705 dev_loss=4.0757 dev_ppl=58.89
+epoch=6 train_loss=3.9153 dev_loss=4.1929 dev_ppl=66.21
+epoch=7 train_loss=4.1456 dev_loss=4.2410 dev_ppl=69.48
+epoch=8 train_loss=4.0072 dev_loss=4.2384 dev_ppl=69.30
+Best dev ppl: 58.89
+Test ppl: 52.01
+Saved best model to: bin/seq_ff_dim_1024.pt
+Tuning trial: seq_ff_dim_2048
+Trainable weights before tuning trial: 83,562,577
+Experiment: seq_ff_dim_2048
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 83562577
+Hyperparameters: ExperimentConfig(name='seq_ff_dim_2048', learning_rate=0.0007, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=2048, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.3315 dev_loss=4.7160 dev_ppl=111.72
+epoch=2 train_loss=4.4455 dev_loss=4.2973 dev_ppl=73.50
+epoch=3 train_loss=4.0826 dev_loss=4.1055 dev_ppl=60.67
+epoch=4 train_loss=3.8813 dev_loss=4.0083 dev_ppl=55.05
+epoch=5 train_loss=3.7482 dev_loss=3.9256 dev_ppl=50.68
+epoch=6 train_loss=3.6460 dev_loss=3.8967 dev_ppl=49.24
+epoch=7 train_loss=3.5461 dev_loss=3.8342 dev_ppl=46.26
+epoch=8 train_loss=3.4590 dev_loss=3.8160 dev_ppl=45.42
+epoch=9 train_loss=3.3757 dev_loss=3.7920 dev_ppl=44.35
+epoch=10 train_loss=3.2950 dev_loss=3.7798 dev_ppl=43.81
+epoch=11 train_loss=3.2169 dev_loss=3.7659 dev_ppl=43.20
+epoch=12 train_loss=3.1391 dev_loss=3.7761 dev_ppl=43.64
+epoch=13 train_loss=3.0700 dev_loss=3.7629 dev_ppl=43.07
+epoch=14 train_loss=2.9878 dev_loss=3.7894 dev_ppl=44.23
+epoch=15 train_loss=2.9010 dev_loss=3.7917 dev_ppl=44.33
+epoch=16 train_loss=2.8088 dev_loss=3.8405 dev_ppl=46.55
+Best dev ppl: 43.07
+Test ppl: 38.70
+Saved best model to: bin/seq_ff_dim_2048.pt
+Tuning trial: seq_ff_dim_3072
+Trainable weights before tuning trial: 94,058,577
+Experiment: seq_ff_dim_3072
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq_ff_dim_3072', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9863 dev_loss=4.4188 dev_ppl=83.00
+epoch=2 train_loss=4.1265 dev_loss=4.0317 dev_ppl=56.36
+epoch=3 train_loss=3.7882 dev_loss=3.8700 dev_ppl=47.94
+epoch=4 train_loss=3.5824 dev_loss=3.7776 dev_ppl=43.71
+epoch=5 train_loss=3.4273 dev_loss=3.7253 dev_ppl=41.48
+epoch=6 train_loss=3.2921 dev_loss=3.6938 dev_ppl=40.20
+epoch=7 train_loss=3.1706 dev_loss=3.6788 dev_ppl=39.60
+epoch=8 train_loss=3.0519 dev_loss=3.6751 dev_ppl=39.45
+epoch=9 train_loss=2.9327 dev_loss=3.6917 dev_ppl=40.11
+epoch=10 train_loss=2.8127 dev_loss=3.7371 dev_ppl=41.97
+epoch=11 train_loss=2.6794 dev_loss=3.7756 dev_ppl=43.63
+Best dev ppl: 39.45
+Test ppl: 35.53
+Saved best model to: bin/seq_ff_dim_3072.pt
+Best after ff_dim: seq_ff_dim_3072 dev_ppl=39.45 test_ppl=35.53
+
+Final sequential best config:
+ExperimentConfig(name='seq_ff_dim_3072', learning_rate=0.0005, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+
+Tuning step: tune_dropout_0.0
+Trainable weights before tuning step: 94,058,577
+Experiment: tune_dropout_0.0
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='tune_dropout_0.0', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.0, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.8468 dev_loss=4.2018 dev_ppl=66.80
+epoch=2 train_loss=3.9089 dev_loss=3.8652 dev_ppl=47.71
+epoch=3 train_loss=3.5716 dev_loss=3.7128 dev_ppl=40.97
+epoch=4 train_loss=3.3320 dev_loss=3.6469 dev_ppl=38.36
+epoch=5 train_loss=3.1323 dev_loss=3.6100 dev_ppl=36.97
+epoch=6 train_loss=2.9450 dev_loss=3.6397 dev_ppl=38.08
+epoch=7 train_loss=2.7571 dev_loss=3.6909 dev_ppl=40.08
+epoch=8 train_loss=2.5608 dev_loss=3.7592 dev_ppl=42.91
+Best dev ppl: 36.97
+Test ppl: 33.32
+Saved best model to: bin/tune_dropout_0.0.pt
+Tuning step: tune_dropout_0.1
+Trainable weights before tuning step: 94,058,577
+Experiment: tune_dropout_0.1
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='tune_dropout_0.1', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.1, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9115 dev_loss=4.2488 dev_ppl=70.02
+epoch=2 train_loss=3.9995 dev_loss=3.9113 dev_ppl=49.97
+epoch=3 train_loss=3.6820 dev_loss=3.7535 dev_ppl=42.67
+epoch=4 train_loss=3.4633 dev_loss=3.6619 dev_ppl=38.93
+epoch=5 train_loss=3.2947 dev_loss=3.6019 dev_ppl=36.67
+epoch=6 train_loss=3.1490 dev_loss=3.5847 dev_ppl=36.04
+epoch=7 train_loss=3.0179 dev_loss=3.5806 dev_ppl=35.90
+epoch=8 train_loss=2.8923 dev_loss=3.5908 dev_ppl=36.26
+epoch=9 train_loss=2.7709 dev_loss=3.6340 dev_ppl=37.87
+epoch=10 train_loss=2.6503 dev_loss=3.6688 dev_ppl=39.21
+Best dev ppl: 35.90
+Test ppl: 32.08
+Saved best model to: bin/tune_dropout_0.1.pt
+Tuning step: tune_dropout_0.2
+Trainable weights before tuning step: 94,058,577
+Experiment: tune_dropout_0.2
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='tune_dropout_0.2', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.2, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.0128 dev_loss=4.3638 dev_ppl=78.56
+epoch=2 train_loss=4.1272 dev_loss=4.0025 dev_ppl=54.74
+epoch=3 train_loss=3.8021 dev_loss=3.8173 dev_ppl=45.48
+epoch=4 train_loss=3.5833 dev_loss=3.7152 dev_ppl=41.07
+epoch=5 train_loss=3.4198 dev_loss=3.6327 dev_ppl=37.82
+epoch=6 train_loss=3.2852 dev_loss=3.6026 dev_ppl=36.69
+epoch=7 train_loss=3.1686 dev_loss=3.5729 dev_ppl=35.62
+epoch=8 train_loss=3.0628 dev_loss=3.5593 dev_ppl=35.14
+epoch=9 train_loss=2.9644 dev_loss=3.5689 dev_ppl=35.48
+epoch=10 train_loss=2.8679 dev_loss=3.5752 dev_ppl=35.70
+epoch=11 train_loss=2.7736 dev_loss=3.5957 dev_ppl=36.44
+Best dev ppl: 35.14
+Test ppl: 31.25
+Saved best model to: bin/tune_dropout_0.2.pt
+Tuning step: tune_dropout_0.3
+Trainable weights before tuning step: 94,058,577
+Experiment: tune_dropout_0.3
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='tune_dropout_0.3', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9321 dev_loss=4.3174 dev_ppl=74.99
+epoch=2 train_loss=4.1256 dev_loss=4.0170 dev_ppl=55.53
+epoch=3 train_loss=3.8478 dev_loss=3.8490 dev_ppl=46.94
+epoch=4 train_loss=3.6509 dev_loss=3.7480 dev_ppl=42.44
+epoch=5 train_loss=3.4988 dev_loss=3.6579 dev_ppl=38.78
+epoch=6 train_loss=3.3720 dev_loss=3.6254 dev_ppl=37.54
+epoch=7 train_loss=3.2650 dev_loss=3.5849 dev_ppl=36.05
+epoch=8 train_loss=3.1680 dev_loss=3.5654 dev_ppl=35.35
+epoch=9 train_loss=3.0793 dev_loss=3.5670 dev_ppl=35.41
+epoch=10 train_loss=2.9950 dev_loss=3.5453 dev_ppl=34.65
+epoch=11 train_loss=2.9141 dev_loss=3.5606 dev_ppl=35.19
+epoch=12 train_loss=2.8343 dev_loss=3.5641 dev_ppl=35.31
+epoch=13 train_loss=2.7548 dev_loss=3.5877 dev_ppl=36.15
+Best dev ppl: 34.65
+Test ppl: 30.95
+Saved best model to: bin/tune_dropout_0.3.pt
+Tuning step: tune_dropout_0.4
+Trainable weights before tuning step: 94,058,577
+Experiment: tune_dropout_0.4
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='tune_dropout_0.4', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.4, tie_weights=False, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9785 dev_loss=4.3768 dev_ppl=79.58
+epoch=2 train_loss=4.2042 dev_loss=4.1034 dev_ppl=60.54
+epoch=3 train_loss=3.9457 dev_loss=3.9374 dev_ppl=51.29
+epoch=4 train_loss=3.7582 dev_loss=3.8400 dev_ppl=46.53
+epoch=5 train_loss=3.6108 dev_loss=3.7387 dev_ppl=42.04
+epoch=6 train_loss=3.4874 dev_loss=3.6958 dev_ppl=40.28
+epoch=7 train_loss=3.3826 dev_loss=3.6380 dev_ppl=38.01
+epoch=8 train_loss=3.2899 dev_loss=3.6103 dev_ppl=36.98
+epoch=9 train_loss=3.2077 dev_loss=3.5924 dev_ppl=36.32
+epoch=10 train_loss=3.1299 dev_loss=3.5736 dev_ppl=35.64
+epoch=11 train_loss=3.0586 dev_loss=3.5722 dev_ppl=35.59
+epoch=12 train_loss=2.9888 dev_loss=3.5653 dev_ppl=35.35
+epoch=13 train_loss=2.9218 dev_loss=3.5738 dev_ppl=35.65
+epoch=14 train_loss=2.8554 dev_loss=3.5912 dev_ppl=36.28
+epoch=15 train_loss=2.7896 dev_loss=3.5988 dev_ppl=36.55
+Best dev ppl: 35.35
+Test ppl: 31.18
+Saved best model to: bin/tune_dropout_0.4.pt
+
+Tuning step: tune_dropout_0.3
+Trainable weights before tuning step: 68,326,993
+Experiment: tune_dropout_0.3
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 68326993
+Hyperparameters: ExperimentConfig(name='weight_tying', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=True, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.8941 dev_loss=4.3134 dev_ppl=74.70
+epoch=2 train_loss=4.1397 dev_loss=4.0023 dev_ppl=54.72
+epoch=3 train_loss=3.8546 dev_loss=3.8256 dev_ppl=45.86
+epoch=4 train_loss=3.6577 dev_loss=3.7061 dev_ppl=40.70
+epoch=5 train_loss=3.5074 dev_loss=3.6159 dev_ppl=37.19
+epoch=6 train_loss=3.3827 dev_loss=3.5705 dev_ppl=35.53
+epoch=7 train_loss=3.2756 dev_loss=3.5328 dev_ppl=34.22
+epoch=8 train_loss=3.1800 dev_loss=3.4981 dev_ppl=33.05
+epoch=9 train_loss=3.0930 dev_loss=3.4875 dev_ppl=32.70
+epoch=10 train_loss=3.0093 dev_loss=3.4762 dev_ppl=32.34
+epoch=11 train_loss=2.9294 dev_loss=3.4730 dev_ppl=32.23
+epoch=12 train_loss=2.8493 dev_loss=3.4774 dev_ppl=32.38
+epoch=13 train_loss=2.7698 dev_loss=3.4822 dev_ppl=32.53
+epoch=14 train_loss=2.6911 dev_loss=3.4956 dev_ppl=32.97
+Best dev ppl: 32.23
+Test ppl: 28.94
+Saved best model to: bin/weight_tying.pt
+
+
+Sequential sweep 1/3: weight_decay
+Base config for this sweep: ExperimentConfig(name='baseline', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.0, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning step: seq1_weight_decay_0.0
+Trainable weights before tuning step: 94,058,577
+Experiment: seq1_weight_decay_0.0
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq1_weight_decay_0.0', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.0, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9317 dev_loss=4.3210 dev_ppl=75.27
+epoch=2 train_loss=4.1254 dev_loss=4.0178 dev_ppl=55.58
+epoch=3 train_loss=3.8471 dev_loss=3.8491 dev_ppl=46.95
+epoch=4 train_loss=3.6503 dev_loss=3.7502 dev_ppl=42.53
+epoch=5 train_loss=3.4978 dev_loss=3.6608 dev_ppl=38.89
+epoch=6 train_loss=3.3710 dev_loss=3.6290 dev_ppl=37.67
+epoch=7 train_loss=3.2629 dev_loss=3.5849 dev_ppl=36.05
+epoch=8 train_loss=3.1659 dev_loss=3.5702 dev_ppl=35.52
+epoch=9 train_loss=3.0770 dev_loss=3.5621 dev_ppl=35.24
+epoch=10 train_loss=2.9919 dev_loss=3.5502 dev_ppl=34.82
+epoch=11 train_loss=2.9097 dev_loss=3.5695 dev_ppl=35.50
+epoch=12 train_loss=2.8277 dev_loss=3.5688 dev_ppl=35.47
+epoch=13 train_loss=2.7468 dev_loss=3.5883 dev_ppl=36.17
+Best dev ppl: 34.82
+Test ppl: 31.00
+Saved best model to: bin/seq1_weight_decay_0.0.pt
+Tuning step: seq1_weight_decay_0.001
+Trainable weights before tuning step: 94,058,577
+Experiment: seq1_weight_decay_0.001
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq1_weight_decay_0.001', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.001, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9318 dev_loss=4.3181 dev_ppl=75.05
+epoch=2 train_loss=4.1253 dev_loss=4.0168 dev_ppl=55.52
+epoch=3 train_loss=3.8470 dev_loss=3.8477 dev_ppl=46.88
+epoch=4 train_loss=3.6502 dev_loss=3.7485 dev_ppl=42.46
+epoch=5 train_loss=3.4978 dev_loss=3.6589 dev_ppl=38.82
+epoch=6 train_loss=3.3703 dev_loss=3.6231 dev_ppl=37.45
+epoch=7 train_loss=3.2628 dev_loss=3.5851 dev_ppl=36.06
+epoch=8 train_loss=3.1651 dev_loss=3.5656 dev_ppl=35.36
+epoch=9 train_loss=3.0763 dev_loss=3.5641 dev_ppl=35.31
+epoch=10 train_loss=2.9913 dev_loss=3.5500 dev_ppl=34.81
+epoch=11 train_loss=2.9093 dev_loss=3.5639 dev_ppl=35.30
+epoch=12 train_loss=2.8278 dev_loss=3.5703 dev_ppl=35.53
+epoch=13 train_loss=2.7469 dev_loss=3.5874 dev_ppl=36.14
+Best dev ppl: 34.81
+Test ppl: 31.05
+Saved best model to: bin/seq1_weight_decay_0.001.pt
+Tuning step: seq1_weight_decay_0.01
+Trainable weights before tuning step: 94,058,577
+Experiment: seq1_weight_decay_0.01
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq1_weight_decay_0.01', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.01, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9321 dev_loss=4.3174 dev_ppl=74.99
+epoch=2 train_loss=4.1256 dev_loss=4.0170 dev_ppl=55.53
+epoch=3 train_loss=3.8478 dev_loss=3.8490 dev_ppl=46.94
+epoch=4 train_loss=3.6509 dev_loss=3.7480 dev_ppl=42.44
+epoch=5 train_loss=3.4988 dev_loss=3.6579 dev_ppl=38.78
+epoch=6 train_loss=3.3720 dev_loss=3.6254 dev_ppl=37.54
+epoch=7 train_loss=3.2650 dev_loss=3.5849 dev_ppl=36.05
+epoch=8 train_loss=3.1680 dev_loss=3.5654 dev_ppl=35.35
+epoch=9 train_loss=3.0793 dev_loss=3.5670 dev_ppl=35.41
+epoch=10 train_loss=2.9950 dev_loss=3.5453 dev_ppl=34.65
+epoch=11 train_loss=2.9141 dev_loss=3.5606 dev_ppl=35.19
+epoch=12 train_loss=2.8343 dev_loss=3.5641 dev_ppl=35.31
+epoch=13 train_loss=2.7548 dev_loss=3.5877 dev_ppl=36.15
+Best dev ppl: 34.65
+Test ppl: 30.95
+Saved best model to: bin/seq1_weight_decay_0.01.pt
+Tuning step: seq1_weight_decay_0.05
+Trainable weights before tuning step: 94,058,577
+Experiment: seq1_weight_decay_0.05
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq1_weight_decay_0.05', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.05, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9330 dev_loss=4.3172 dev_ppl=74.98
+epoch=2 train_loss=4.1282 dev_loss=4.0167 dev_ppl=55.52
+epoch=3 train_loss=3.8512 dev_loss=3.8504 dev_ppl=47.01
+epoch=4 train_loss=3.6552 dev_loss=3.7517 dev_ppl=42.60
+epoch=5 train_loss=3.5039 dev_loss=3.6580 dev_ppl=38.78
+epoch=6 train_loss=3.3772 dev_loss=3.6226 dev_ppl=37.44
+epoch=7 train_loss=3.2710 dev_loss=3.5803 dev_ppl=35.88
+epoch=8 train_loss=3.1752 dev_loss=3.5639 dev_ppl=35.30
+epoch=9 train_loss=3.0878 dev_loss=3.5560 dev_ppl=35.02
+epoch=10 train_loss=3.0057 dev_loss=3.5383 dev_ppl=34.41
+epoch=11 train_loss=2.9267 dev_loss=3.5518 dev_ppl=34.88
+epoch=12 train_loss=2.8486 dev_loss=3.5519 dev_ppl=34.88
+epoch=13 train_loss=2.7728 dev_loss=3.5652 dev_ppl=35.35
+Best dev ppl: 34.41
+Test ppl: 30.73
+Saved best model to: bin/seq1_weight_decay_0.05.pt
+Tuning step: seq1_weight_decay_0.1
+Trainable weights before tuning step: 94,058,577
+Experiment: seq1_weight_decay_0.1
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq1_weight_decay_0.1', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9343 dev_loss=4.3209 dev_ppl=75.25
+epoch=2 train_loss=4.1308 dev_loss=4.0222 dev_ppl=55.82
+epoch=3 train_loss=3.8544 dev_loss=3.8534 dev_ppl=47.15
+epoch=4 train_loss=3.6593 dev_loss=3.7522 dev_ppl=42.62
+epoch=5 train_loss=3.5081 dev_loss=3.6609 dev_ppl=38.90
+epoch=6 train_loss=3.3833 dev_loss=3.6219 dev_ppl=37.41
+epoch=7 train_loss=3.2784 dev_loss=3.5810 dev_ppl=35.91
+epoch=8 train_loss=3.1843 dev_loss=3.5542 dev_ppl=34.96
+epoch=9 train_loss=3.1001 dev_loss=3.5486 dev_ppl=34.76
+epoch=10 train_loss=3.0201 dev_loss=3.5306 dev_ppl=34.15
+epoch=11 train_loss=2.9448 dev_loss=3.5380 dev_ppl=34.40
+epoch=12 train_loss=2.8716 dev_loss=3.5378 dev_ppl=34.39
+epoch=13 train_loss=2.7999 dev_loss=3.5423 dev_ppl=34.55
+Best dev ppl: 34.15
+Test ppl: 30.58
+Saved best model to: bin/seq1_weight_decay_0.1.pt
+Best after weight_decay: ExperimentConfig(name='best_after_weight_decay', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42) dev_ppl=34.1461 test_ppl=30.5805
+Sequential sweep 2/3: lr_schedule
+Base config for this sweep: ExperimentConfig(name='best_after_weight_decay', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning step: seq2_lr_schedule_none
+Trainable weights before tuning step: 94,058,577
+Experiment: seq2_lr_schedule_none
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq2_lr_schedule_none', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='none', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9343 dev_loss=4.3209 dev_ppl=75.25
+epoch=2 train_loss=4.1308 dev_loss=4.0222 dev_ppl=55.82
+epoch=3 train_loss=3.8544 dev_loss=3.8534 dev_ppl=47.15
+epoch=4 train_loss=3.6593 dev_loss=3.7522 dev_ppl=42.62
+epoch=5 train_loss=3.5081 dev_loss=3.6609 dev_ppl=38.90
+epoch=6 train_loss=3.3833 dev_loss=3.6219 dev_ppl=37.41
+epoch=7 train_loss=3.2784 dev_loss=3.5810 dev_ppl=35.91
+epoch=8 train_loss=3.1843 dev_loss=3.5542 dev_ppl=34.96
+epoch=9 train_loss=3.1001 dev_loss=3.5486 dev_ppl=34.76
+epoch=10 train_loss=3.0201 dev_loss=3.5306 dev_ppl=34.15
+epoch=11 train_loss=2.9448 dev_loss=3.5380 dev_ppl=34.40
+epoch=12 train_loss=2.8716 dev_loss=3.5378 dev_ppl=34.39
+epoch=13 train_loss=2.7999 dev_loss=3.5423 dev_ppl=34.55
+Best dev ppl: 34.15
+Test ppl: 30.58
+Saved best model to: bin/seq2_lr_schedule_none.pt
+Tuning step: seq2_lr_schedule_linear
+Trainable weights before tuning step: 94,058,577
+Experiment: seq2_lr_schedule_linear
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq2_lr_schedule_linear', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9349 dev_loss=4.3216 dev_ppl=75.31
+epoch=2 train_loss=4.1324 dev_loss=4.0261 dev_ppl=56.04
+epoch=3 train_loss=3.8565 dev_loss=3.8525 dev_ppl=47.11
+epoch=4 train_loss=3.6613 dev_loss=3.7547 dev_ppl=42.72
+epoch=5 train_loss=3.5109 dev_loss=3.6612 dev_ppl=38.91
+epoch=6 train_loss=3.3856 dev_loss=3.6217 dev_ppl=37.40
+epoch=7 train_loss=3.2806 dev_loss=3.5797 dev_ppl=35.86
+epoch=8 train_loss=3.1867 dev_loss=3.5549 dev_ppl=34.99
+epoch=9 train_loss=3.1026 dev_loss=3.5437 dev_ppl=34.59
+epoch=10 train_loss=3.0224 dev_loss=3.5244 dev_ppl=33.93
+epoch=11 train_loss=2.9477 dev_loss=3.5335 dev_ppl=34.24
+epoch=12 train_loss=2.8744 dev_loss=3.5296 dev_ppl=34.11
+epoch=13 train_loss=2.8031 dev_loss=3.5399 dev_ppl=34.46
+Best dev ppl: 33.93
+Test ppl: 30.48
+Saved best model to: bin/seq2_lr_schedule_linear.pt
+Tuning step: seq2_lr_schedule_cosine
+Trainable weights before tuning step: 94,058,577
+Experiment: seq2_lr_schedule_cosine
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq2_lr_schedule_cosine', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='cosine', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9343 dev_loss=4.3207 dev_ppl=75.24
+epoch=2 train_loss=4.1310 dev_loss=4.0218 dev_ppl=55.80
+epoch=3 train_loss=3.8548 dev_loss=3.8537 dev_ppl=47.17
+epoch=4 train_loss=3.6600 dev_loss=3.7524 dev_ppl=42.62
+epoch=5 train_loss=3.5085 dev_loss=3.6608 dev_ppl=38.89
+epoch=6 train_loss=3.3831 dev_loss=3.6221 dev_ppl=37.42
+epoch=7 train_loss=3.2782 dev_loss=3.5842 dev_ppl=36.02
+epoch=8 train_loss=3.1843 dev_loss=3.5591 dev_ppl=35.13
+epoch=9 train_loss=3.0994 dev_loss=3.5458 dev_ppl=34.67
+epoch=10 train_loss=3.0187 dev_loss=3.5318 dev_ppl=34.18
+epoch=11 train_loss=2.9427 dev_loss=3.5358 dev_ppl=34.32
+epoch=12 train_loss=2.8685 dev_loss=3.5347 dev_ppl=34.28
+epoch=13 train_loss=2.7968 dev_loss=3.5436 dev_ppl=34.59
+Best dev ppl: 34.18
+Test ppl: 30.69
+Saved best model to: bin/seq2_lr_schedule_cosine.pt
+Tuning step: seq2_lr_schedule_inverse_sqrt
+Trainable weights before tuning step: 94,058,577
+Experiment: seq2_lr_schedule_inverse_sqrt
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq2_lr_schedule_inverse_sqrt', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='inverse_sqrt', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=6.2996 dev_loss=5.3900 dev_ppl=219.21
+epoch=2 train_loss=5.2537 dev_loss=5.0778 dev_ppl=160.42
+epoch=3 train_loss=5.0344 dev_loss=4.9187 dev_ppl=136.83
+epoch=4 train_loss=4.9028 dev_loss=4.8117 dev_ppl=122.94
+epoch=5 train_loss=4.8089 dev_loss=4.7319 dev_ppl=113.51
+epoch=6 train_loss=4.7362 dev_loss=4.6709 dev_ppl=106.79
+epoch=7 train_loss=4.6781 dev_loss=4.6211 dev_ppl=101.61
+epoch=8 train_loss=4.6290 dev_loss=4.5777 dev_ppl=97.29
+epoch=9 train_loss=4.5871 dev_loss=4.5416 dev_ppl=93.85
+epoch=10 train_loss=4.5508 dev_loss=4.5074 dev_ppl=90.68
+epoch=11 train_loss=4.5181 dev_loss=4.4788 dev_ppl=88.13
+epoch=12 train_loss=4.4891 dev_loss=4.4547 dev_ppl=86.03
+epoch=13 train_loss=4.4629 dev_loss=4.4290 dev_ppl=83.85
+epoch=14 train_loss=4.4385 dev_loss=4.4062 dev_ppl=81.96
+epoch=15 train_loss=4.4164 dev_loss=4.3878 dev_ppl=80.46
+epoch=16 train_loss=4.3960 dev_loss=4.3710 dev_ppl=79.12
+epoch=17 train_loss=4.3765 dev_loss=4.3522 dev_ppl=77.65
+epoch=18 train_loss=4.3590 dev_loss=4.3374 dev_ppl=76.51
+epoch=19 train_loss=4.3423 dev_loss=4.3225 dev_ppl=75.37
+epoch=20 train_loss=4.3266 dev_loss=4.3073 dev_ppl=74.24
+epoch=21 train_loss=4.3115 dev_loss=4.2924 dev_ppl=73.14
+epoch=22 train_loss=4.2968 dev_loss=4.2822 dev_ppl=72.40
+epoch=23 train_loss=4.2832 dev_loss=4.2709 dev_ppl=71.59
+epoch=24 train_loss=4.2699 dev_loss=4.2591 dev_ppl=70.74
+epoch=25 train_loss=4.2581 dev_loss=4.2457 dev_ppl=69.80
+epoch=26 train_loss=4.2456 dev_loss=4.2352 dev_ppl=69.08
+epoch=27 train_loss=4.2345 dev_loss=4.2275 dev_ppl=68.55
+epoch=28 train_loss=4.2233 dev_loss=4.2179 dev_ppl=67.89
+epoch=29 train_loss=4.2131 dev_loss=4.2075 dev_ppl=67.19
+epoch=30 train_loss=4.2028 dev_loss=4.1995 dev_ppl=66.65
+epoch=31 train_loss=4.1920 dev_loss=4.1911 dev_ppl=66.10
+epoch=32 train_loss=4.1828 dev_loss=4.1820 dev_ppl=65.50
+epoch=33 train_loss=4.1732 dev_loss=4.1764 dev_ppl=65.13
+epoch=34 train_loss=4.1651 dev_loss=4.1680 dev_ppl=64.59
+epoch=35 train_loss=4.1551 dev_loss=4.1596 dev_ppl=64.05
+epoch=36 train_loss=4.1475 dev_loss=4.1525 dev_ppl=63.59
+epoch=37 train_loss=4.1385 dev_loss=4.1454 dev_ppl=63.14
+epoch=38 train_loss=4.1309 dev_loss=4.1367 dev_ppl=62.59
+epoch=39 train_loss=4.1228 dev_loss=4.1307 dev_ppl=62.22
+epoch=40 train_loss=4.1149 dev_loss=4.1249 dev_ppl=61.86
+epoch=41 train_loss=4.1073 dev_loss=4.1200 dev_ppl=61.56
+epoch=42 train_loss=4.1007 dev_loss=4.1121 dev_ppl=61.07
+epoch=43 train_loss=4.0931 dev_loss=4.1056 dev_ppl=60.68
+epoch=44 train_loss=4.0863 dev_loss=4.1010 dev_ppl=60.40
+epoch=45 train_loss=4.0797 dev_loss=4.0954 dev_ppl=60.06
+epoch=46 train_loss=4.0732 dev_loss=4.0881 dev_ppl=59.63
+epoch=47 train_loss=4.0667 dev_loss=4.0828 dev_ppl=59.31
+epoch=48 train_loss=4.0590 dev_loss=4.0792 dev_ppl=59.10
+epoch=49 train_loss=4.0532 dev_loss=4.0724 dev_ppl=58.70
+epoch=50 train_loss=4.0476 dev_loss=4.0691 dev_ppl=58.51
+epoch=51 train_loss=4.0411 dev_loss=4.0625 dev_ppl=58.12
+epoch=52 train_loss=4.0352 dev_loss=4.0581 dev_ppl=57.86
+epoch=53 train_loss=4.0298 dev_loss=4.0533 dev_ppl=57.59
+epoch=54 train_loss=4.0244 dev_loss=4.0495 dev_ppl=57.37
+epoch=55 train_loss=4.0182 dev_loss=4.0430 dev_ppl=57.00
+epoch=56 train_loss=4.0129 dev_loss=4.0388 dev_ppl=56.76
+epoch=57 train_loss=4.0072 dev_loss=4.0352 dev_ppl=56.56
+epoch=58 train_loss=4.0024 dev_loss=4.0300 dev_ppl=56.26
+epoch=59 train_loss=3.9972 dev_loss=4.0269 dev_ppl=56.09
+epoch=60 train_loss=3.9915 dev_loss=4.0216 dev_ppl=55.79
+epoch=61 train_loss=3.9863 dev_loss=4.0215 dev_ppl=55.79
+epoch=62 train_loss=3.9818 dev_loss=4.0139 dev_ppl=55.36
+epoch=63 train_loss=3.9770 dev_loss=4.0099 dev_ppl=55.14
+epoch=64 train_loss=3.9715 dev_loss=4.0067 dev_ppl=54.96
+epoch=65 train_loss=3.9675 dev_loss=4.0029 dev_ppl=54.76
+epoch=66 train_loss=3.9621 dev_loss=4.0008 dev_ppl=54.64
+epoch=67 train_loss=3.9580 dev_loss=3.9948 dev_ppl=54.32
+epoch=68 train_loss=3.9527 dev_loss=3.9911 dev_ppl=54.11
+epoch=69 train_loss=3.9484 dev_loss=3.9864 dev_ppl=53.86
+epoch=70 train_loss=3.9440 dev_loss=3.9843 dev_ppl=53.75
+epoch=71 train_loss=3.9397 dev_loss=3.9808 dev_ppl=53.56
+epoch=72 train_loss=3.9351 dev_loss=3.9776 dev_ppl=53.39
+epoch=73 train_loss=3.9310 dev_loss=3.9736 dev_ppl=53.18
+epoch=74 train_loss=3.9264 dev_loss=3.9686 dev_ppl=52.91
+epoch=75 train_loss=3.9224 dev_loss=3.9673 dev_ppl=52.84
+epoch=76 train_loss=3.9191 dev_loss=3.9647 dev_ppl=52.71
+epoch=77 train_loss=3.9144 dev_loss=3.9615 dev_ppl=52.54
+epoch=78 train_loss=3.9103 dev_loss=3.9570 dev_ppl=52.30
+epoch=79 train_loss=3.9066 dev_loss=3.9553 dev_ppl=52.21
+epoch=80 train_loss=3.9028 dev_loss=3.9510 dev_ppl=51.99
+epoch=81 train_loss=3.8992 dev_loss=3.9481 dev_ppl=51.84
+epoch=82 train_loss=3.8951 dev_loss=3.9457 dev_ppl=51.71
+epoch=83 train_loss=3.8908 dev_loss=3.9430 dev_ppl=51.58
+epoch=84 train_loss=3.8878 dev_loss=3.9394 dev_ppl=51.39
+epoch=85 train_loss=3.8837 dev_loss=3.9369 dev_ppl=51.26
+epoch=86 train_loss=3.8796 dev_loss=3.9324 dev_ppl=51.03
+epoch=87 train_loss=3.8758 dev_loss=3.9324 dev_ppl=51.03
+epoch=88 train_loss=3.8722 dev_loss=3.9292 dev_ppl=50.86
+epoch=89 train_loss=3.8693 dev_loss=3.9254 dev_ppl=50.68
+epoch=90 train_loss=3.8656 dev_loss=3.9222 dev_ppl=50.51
+epoch=91 train_loss=3.8620 dev_loss=3.9221 dev_ppl=50.50
+epoch=92 train_loss=3.8580 dev_loss=3.9156 dev_ppl=50.18
+epoch=93 train_loss=3.8552 dev_loss=3.9146 dev_ppl=50.13
+epoch=94 train_loss=3.8519 dev_loss=3.9121 dev_ppl=50.00
+epoch=95 train_loss=3.8490 dev_loss=3.9087 dev_ppl=49.83
+epoch=96 train_loss=3.8457 dev_loss=3.9084 dev_ppl=49.82
+epoch=97 train_loss=3.8420 dev_loss=3.9036 dev_ppl=49.58
+epoch=98 train_loss=3.8389 dev_loss=3.9022 dev_ppl=49.51
+epoch=99 train_loss=3.8353 dev_loss=3.9001 dev_ppl=49.41
+epoch=100 train_loss=3.8330 dev_loss=3.8969 dev_ppl=49.25
+Best dev ppl: 49.25
+Test ppl: 43.74
+Saved best model to: bin/seq2_lr_schedule_inverse_sqrt.pt
+Best after lr_schedule: ExperimentConfig(name='best_after_lr_schedule', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42) dev_ppl=33.9350 test_ppl=30.4767
+Sequential sweep 3/3: warmup_steps
+Base config for this sweep: ExperimentConfig(name='best_after_lr_schedule', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Tuning step: seq3_warmup_steps_0
+Trainable weights before tuning step: 94,058,577
+Experiment: seq3_warmup_steps_0
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq3_warmup_steps_0', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=4.9349 dev_loss=4.3216 dev_ppl=75.31
+epoch=2 train_loss=4.1324 dev_loss=4.0261 dev_ppl=56.04
+epoch=3 train_loss=3.8565 dev_loss=3.8525 dev_ppl=47.11
+epoch=4 train_loss=3.6613 dev_loss=3.7547 dev_ppl=42.72
+epoch=5 train_loss=3.5109 dev_loss=3.6612 dev_ppl=38.91
+epoch=6 train_loss=3.3856 dev_loss=3.6217 dev_ppl=37.40
+epoch=7 train_loss=3.2806 dev_loss=3.5797 dev_ppl=35.86
+epoch=8 train_loss=3.1867 dev_loss=3.5549 dev_ppl=34.99
+epoch=9 train_loss=3.1026 dev_loss=3.5437 dev_ppl=34.59
+epoch=10 train_loss=3.0224 dev_loss=3.5244 dev_ppl=33.93
+epoch=11 train_loss=2.9477 dev_loss=3.5335 dev_ppl=34.24
+epoch=12 train_loss=2.8744 dev_loss=3.5296 dev_ppl=34.11
+epoch=13 train_loss=2.8031 dev_loss=3.5399 dev_ppl=34.46
+Best dev ppl: 33.93
+Test ppl: 30.48
+Saved best model to: bin/seq3_warmup_steps_0.pt
+Tuning step: seq3_warmup_steps_50
+Trainable weights before tuning step: 94,058,577
+Experiment: seq3_warmup_steps_50
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq3_warmup_steps_50', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=50, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.0277 dev_loss=4.2906 dev_ppl=73.01
+epoch=2 train_loss=4.1073 dev_loss=4.0096 dev_ppl=55.13
+epoch=3 train_loss=3.8437 dev_loss=3.8421 dev_ppl=46.62
+epoch=4 train_loss=3.6579 dev_loss=3.7524 dev_ppl=42.62
+epoch=5 train_loss=3.5138 dev_loss=3.6648 dev_ppl=39.05
+epoch=6 train_loss=3.3938 dev_loss=3.6297 dev_ppl=37.70
+epoch=7 train_loss=3.2900 dev_loss=3.5922 dev_ppl=36.32
+epoch=8 train_loss=3.1987 dev_loss=3.5647 dev_ppl=35.33
+epoch=9 train_loss=3.1169 dev_loss=3.5548 dev_ppl=34.98
+epoch=10 train_loss=3.0387 dev_loss=3.5415 dev_ppl=34.52
+epoch=11 train_loss=2.9658 dev_loss=3.5387 dev_ppl=34.42
+epoch=12 train_loss=2.8963 dev_loss=3.5447 dev_ppl=34.63
+epoch=13 train_loss=2.8282 dev_loss=3.5486 dev_ppl=34.76
+epoch=14 train_loss=2.7611 dev_loss=3.5513 dev_ppl=34.86
+Best dev ppl: 34.42
+Test ppl: 30.79
+Saved best model to: bin/seq3_warmup_steps_50.pt
+Tuning step: seq3_warmup_steps_100
+Trainable weights before tuning step: 94,058,577
+Experiment: seq3_warmup_steps_100
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq3_warmup_steps_100', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=100, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.1614 dev_loss=4.2925 dev_ppl=73.15
+epoch=2 train_loss=4.1053 dev_loss=4.0050 dev_ppl=54.87
+epoch=3 train_loss=3.8442 dev_loss=3.8507 dev_ppl=47.03
+epoch=4 train_loss=3.6644 dev_loss=3.7598 dev_ppl=42.94
+epoch=5 train_loss=3.5241 dev_loss=3.6692 dev_ppl=39.22
+epoch=6 train_loss=3.4060 dev_loss=3.6353 dev_ppl=37.91
+epoch=7 train_loss=3.3034 dev_loss=3.5980 dev_ppl=36.53
+epoch=8 train_loss=3.2125 dev_loss=3.5624 dev_ppl=35.25
+epoch=9 train_loss=3.1310 dev_loss=3.5580 dev_ppl=35.09
+epoch=10 train_loss=3.0539 dev_loss=3.5477 dev_ppl=34.73
+epoch=11 train_loss=2.9813 dev_loss=3.5405 dev_ppl=34.49
+epoch=12 train_loss=2.9132 dev_loss=3.5443 dev_ppl=34.62
+epoch=13 train_loss=2.8458 dev_loss=3.5468 dev_ppl=34.70
+epoch=14 train_loss=2.7809 dev_loss=3.5577 dev_ppl=35.08
+Best dev ppl: 34.49
+Test ppl: 30.87
+Saved best model to: bin/seq3_warmup_steps_100.pt
+Tuning step: seq3_warmup_steps_200
+Trainable weights before tuning step: 94,058,577
+Experiment: seq3_warmup_steps_200
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq3_warmup_steps_200', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=200, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.3616 dev_loss=4.3003 dev_ppl=73.72
+epoch=2 train_loss=4.1064 dev_loss=3.9944 dev_ppl=54.29
+epoch=3 train_loss=3.8401 dev_loss=3.8450 dev_ppl=46.76
+epoch=4 train_loss=3.6620 dev_loss=3.7591 dev_ppl=42.91
+epoch=5 train_loss=3.5248 dev_loss=3.6742 dev_ppl=39.42
+epoch=6 train_loss=3.4104 dev_loss=3.6364 dev_ppl=37.95
+epoch=7 train_loss=3.3099 dev_loss=3.6009 dev_ppl=36.63
+epoch=8 train_loss=3.2206 dev_loss=3.5705 dev_ppl=35.53
+epoch=9 train_loss=3.1394 dev_loss=3.5649 dev_ppl=35.33
+epoch=10 train_loss=3.0644 dev_loss=3.5527 dev_ppl=34.91
+epoch=11 train_loss=2.9928 dev_loss=3.5494 dev_ppl=34.79
+epoch=12 train_loss=2.9254 dev_loss=3.5505 dev_ppl=34.83
+epoch=13 train_loss=2.8606 dev_loss=3.5546 dev_ppl=34.97
+epoch=14 train_loss=2.7966 dev_loss=3.5641 dev_ppl=35.31
+Best dev ppl: 34.79
+Test ppl: 30.88
+Saved best model to: bin/seq3_warmup_steps_200.pt
+Tuning step: seq3_warmup_steps_500
+Trainable weights before tuning step: 94,058,577
+Experiment: seq3_warmup_steps_500
+Device: cuda
+Vocabulary size: 50257
+Trainable parameters: 94058577
+Hyperparameters: ExperimentConfig(name='seq3_warmup_steps_500', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=500, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)
+Seed: 42
+epoch=1 train_loss=5.8253 dev_loss=4.3903 dev_ppl=80.67
+epoch=2 train_loss=4.1660 dev_loss=4.0254 dev_ppl=56.00
+epoch=3 train_loss=3.8679 dev_loss=3.8617 dev_ppl=47.55
+epoch=4 train_loss=3.6844 dev_loss=3.7690 dev_ppl=43.34
+epoch=5 train_loss=3.5474 dev_loss=3.6870 dev_ppl=39.92
+epoch=6 train_loss=3.4322 dev_loss=3.6471 dev_ppl=38.36
+epoch=7 train_loss=3.3317 dev_loss=3.6144 dev_ppl=37.13
+epoch=8 train_loss=3.2427 dev_loss=3.5813 dev_ppl=35.92
+epoch=9 train_loss=3.1624 dev_loss=3.5719 dev_ppl=35.58
+epoch=10 train_loss=3.0885 dev_loss=3.5560 dev_ppl=35.02
+epoch=11 train_loss=3.0182 dev_loss=3.5522 dev_ppl=34.89
+epoch=12 train_loss=2.9516 dev_loss=3.5502 dev_ppl=34.82
+epoch=13 train_loss=2.8884 dev_loss=3.5580 dev_ppl=35.09
+epoch=14 train_loss=2.8262 dev_loss=3.5583 dev_ppl=35.10
+epoch=15 train_loss=2.7654 dev_loss=3.5768 dev_ppl=35.76
+Best dev ppl: 34.82
+Test ppl: 31.03
+Saved best model to: bin/seq3_warmup_steps_500.pt
+Best after warmup_steps: ExperimentConfig(name='best_after_warmup_steps', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42) dev_ppl=33.9350 test_ppl=30.4767
+Final selected config: ExperimentConfig(name='best_after_warmup_steps', learning_rate=0.0003, pos_emb_size=1024, d_model=512, n_heads=8, num_layers=10, ff_dim=3072, dropout=0.3, tie_weights=False, weight_decay=0.1, lr_schedule='linear', warmup_steps=0, gradient_clip=None, batch_size=64, eval_batch_size=128, n_epochs=100, patience=3, seed=42)

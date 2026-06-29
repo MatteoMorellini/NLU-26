@@ -8,7 +8,9 @@ import random
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, TypedDict
+from typing import Callable, Literal, TypedDict
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import numpy as np
 import torch
@@ -20,6 +22,7 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 DEFAULT_TOKENIZER_NAME = "openai-community/gpt2"
 IGNORE_SLOT_ID = -100
 DEFAULT_MAX_LENGTH = 128
+SlotSubtokenStrategy = Literal["first", "last"]
 
 
 class ATISExample(TypedDict):
@@ -36,7 +39,7 @@ class EncodedSample(TypedDict):
     input_ids: list[int]
     attention_mask: list[int]
     slot_labels: list[int]
-    first_subtoken_mask: list[bool]
+    slot_subtoken_mask: list[bool]
     intent_label: int
     words: list[str]
     word_slot_labels: list[str]
@@ -48,7 +51,7 @@ class Batch(TypedDict):
     input_ids: torch.Tensor
     attention_mask: torch.Tensor
     slot_labels: torch.Tensor
-    first_subtoken_mask: torch.Tensor
+    slot_subtoken_mask: torch.Tensor
     intent_labels: torch.Tensor
     words: list[list[str]]
     word_slot_labels: list[list[str]]
@@ -186,11 +189,13 @@ class IntentsAndSlotsGPT2(Dataset[EncodedSample]):
         label_vocab: LabelVocab,
         tokenizer,
         max_length: int = DEFAULT_MAX_LENGTH,
+        slot_subtoken_strategy: SlotSubtokenStrategy = "first",
     ) -> None:
         self.samples = dataset
         self.label_vocab = label_vocab
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.slot_subtoken_strategy = slot_subtoken_strategy
 
     def __len__(self) -> int:
         return len(self.samples)
@@ -217,13 +222,18 @@ class IntentsAndSlotsGPT2(Dataset[EncodedSample]):
         input_ids = list(encoded["input_ids"])
         attention_mask = list(encoded["attention_mask"])
         slot_labels: list[int] = []
-        first_subtoken_mask: list[bool] = []
+        slot_subtoken_mask: list[bool] = []
         previous_word_id: int | None = None
 
-        for word_id in word_ids:
+        for token_idx, word_id in enumerate(word_ids):
+            next_word_id = word_ids[token_idx + 1] if token_idx + 1 < len(word_ids) else None
             is_first_subtoken = word_id is not None and word_id != previous_word_id
-            first_subtoken_mask.append(is_first_subtoken)
-            if is_first_subtoken:
+            is_last_subtoken = word_id is not None and word_id != next_word_id
+            is_slot_subtoken = (
+                is_first_subtoken if self.slot_subtoken_strategy == "first" else is_last_subtoken
+            )
+            slot_subtoken_mask.append(is_slot_subtoken)
+            if is_slot_subtoken:
                 slot_labels.append(self.label_vocab.slot2id[word_slot_labels[word_id]])
             else:
                 slot_labels.append(IGNORE_SLOT_ID)
@@ -232,13 +242,13 @@ class IntentsAndSlotsGPT2(Dataset[EncodedSample]):
         input_ids.append(self.tokenizer.eos_token_id)
         attention_mask.append(1)
         slot_labels.append(IGNORE_SLOT_ID)
-        first_subtoken_mask.append(False)
+        slot_subtoken_mask.append(False)
 
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
             "slot_labels": slot_labels,
-            "first_subtoken_mask": first_subtoken_mask,
+            "slot_subtoken_mask": slot_subtoken_mask,
             "intent_label": self.label_vocab.intent2id[sample["intent"]],
             "words": words,
             "word_slot_labels": word_slot_labels,
@@ -255,7 +265,7 @@ def make_collate_fn(pad_token_id: int, device: torch.device = DEVICE) -> Callabl
         input_ids = torch.full((batch_size, max_len), pad_token_id, dtype=torch.long)
         attention_mask = torch.zeros((batch_size, max_len), dtype=torch.long)
         slot_labels = torch.full((batch_size, max_len), IGNORE_SLOT_ID, dtype=torch.long)
-        first_subtoken_mask = torch.zeros((batch_size, max_len), dtype=torch.bool)
+        slot_subtoken_mask = torch.zeros((batch_size, max_len), dtype=torch.bool)
         intent_labels = torch.tensor([sample["intent_label"] for sample in samples], dtype=torch.long)
 
         for row, sample in enumerate(samples):
@@ -263,13 +273,13 @@ def make_collate_fn(pad_token_id: int, device: torch.device = DEVICE) -> Callabl
             input_ids[row, :length] = torch.tensor(sample["input_ids"], dtype=torch.long)
             attention_mask[row, :length] = torch.tensor(sample["attention_mask"], dtype=torch.long)
             slot_labels[row, :length] = torch.tensor(sample["slot_labels"], dtype=torch.long)
-            first_subtoken_mask[row, :length] = torch.tensor(sample["first_subtoken_mask"], dtype=torch.bool)
+            slot_subtoken_mask[row, :length] = torch.tensor(sample["slot_subtoken_mask"], dtype=torch.bool)
 
         return {
             "input_ids": input_ids.to(device),
             "attention_mask": attention_mask.to(device),
             "slot_labels": slot_labels.to(device),
-            "first_subtoken_mask": first_subtoken_mask.to(device),
+            "slot_subtoken_mask": slot_subtoken_mask.to(device),
             "intent_labels": intent_labels.to(device),
             "words": [sample["words"] for sample in samples],
             "word_slot_labels": [sample["word_slot_labels"] for sample in samples],
@@ -287,13 +297,32 @@ def build_dataloaders(
     max_length: int = DEFAULT_MAX_LENGTH,
     device: torch.device = DEVICE,
     seed: int = 42,
+    slot_subtoken_strategy: SlotSubtokenStrategy = "first",
 ) -> tuple[DataLoader[EncodedSample], DataLoader[EncodedSample], DataLoader[EncodedSample]]:
     """Build train, dev, and test data loaders."""
 
     collate_fn = make_collate_fn(tokenizer.pad_token_id, device=device)
-    train_dataset = IntentsAndSlotsGPT2(splits.train, label_vocab, tokenizer, max_length=max_length)
-    dev_dataset = IntentsAndSlotsGPT2(splits.dev, label_vocab, tokenizer, max_length=max_length)
-    test_dataset = IntentsAndSlotsGPT2(splits.test, label_vocab, tokenizer, max_length=max_length)
+    train_dataset = IntentsAndSlotsGPT2(
+        splits.train,
+        label_vocab,
+        tokenizer,
+        max_length=max_length,
+        slot_subtoken_strategy=slot_subtoken_strategy,
+    )
+    dev_dataset = IntentsAndSlotsGPT2(
+        splits.dev,
+        label_vocab,
+        tokenizer,
+        max_length=max_length,
+        slot_subtoken_strategy=slot_subtoken_strategy,
+    )
+    test_dataset = IntentsAndSlotsGPT2(
+        splits.test,
+        label_vocab,
+        tokenizer,
+        max_length=max_length,
+        slot_subtoken_strategy=slot_subtoken_strategy,
+    )
     generator = torch.Generator()
     generator.manual_seed(seed)
     train_loader = DataLoader(

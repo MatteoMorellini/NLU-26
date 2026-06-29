@@ -1,6 +1,6 @@
 """Run sequential hyperparameter tuning for Part A.
 
-The search order is d_model -> n_heads -> num_layers -> ff_dim -> dropout.
+The search order is weight_decay -> lr_schedule -> warmup_steps.
 Each sweep starts from the best configuration found by the previous sweep,
 using best dev perplexity as the selection criterion.
 """
@@ -14,9 +14,12 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim", "dropout")
+DEFAULT_ORDER = ("weight_decay", "lr_schedule", "warmup_steps")
 DEFAULT_EPOCHS = 100
 DEFAULT_PATIENCE = 3
+DEFAULT_WEIGHT_DECAY = 0.0
+DEFAULT_LR_SCHEDULE = "none"
+DEFAULT_WARMUP_STEPS = 0
 
 
 def load_training_modules() -> tuple[Any, Any, Any, Any, Any, Any, Any]:
@@ -70,6 +73,30 @@ def parse_args() -> Namespace:
         default=Path("sequential_tuning_summary.csv"),
         help="CSV file where the best config after each sweep is written.",
     )
+    parser.add_argument(
+        "--weight-decay",
+        type=float,
+        default=DEFAULT_WEIGHT_DECAY,
+        help="Weight decay used by AdamW.",
+    )
+    parser.add_argument(
+        "--lr-schedule",
+        choices=("none", "linear", "cosine", "inverse_sqrt"),
+        default=DEFAULT_LR_SCHEDULE,
+        help="Step-wise learning-rate schedule used during training.",
+    )
+    parser.add_argument(
+        "--warmup-steps",
+        type=int,
+        default=DEFAULT_WARMUP_STEPS,
+        help="Number of optimizer steps used for LR warmup.",
+    )
+    parser.add_argument(
+        "--gradient-clip",
+        type=float,
+        default=None,
+        help="Max gradient norm. Leave unset to disable clipping.",
+    )
     return parser.parse_args()
 
 
@@ -83,10 +110,14 @@ def config_for_trial(
     """Create a trial config by changing one sweep option on the current best config."""
 
     tuned_value = trial[sweep_name]
+    trial_values = dict(trial)
+    if sweep_name == "d_model":
+        trial_values["ff_dim"] = 4 * int(tuned_value)
+
     name = f"seq_{sweep_name}_{tuned_value}"
     return replace(
         base_config,
-        **trial,
+        **trial_values,
         name=name,
         n_epochs=epochs,
         patience=patience,
@@ -113,6 +144,10 @@ def append_summary(
         "ff_dim",
         "dropout",
         "tie_weights",
+        "weight_decay",
+        "lr_schedule",
+        "warmup_steps",
+        "gradient_clip",
         "learning_rate",
         "seed",
         "best_dev_ppl",
@@ -147,6 +182,10 @@ def append_summary(
                 "ff_dim": config.ff_dim,
                 "dropout": config.dropout,
                 "tie_weights": config.tie_weights,
+                "weight_decay": config.weight_decay,
+                "lr_schedule": config.lr_schedule,
+                "warmup_steps": config.warmup_steps,
+                "gradient_clip": config.gradient_clip,
                 "learning_rate": config.learning_rate,
                 "seed": config.seed,
                 "best_dev_ppl": f"{best_dev_ppl:.4f}",
@@ -174,6 +213,10 @@ def main() -> None:
         name="seq_baseline",
         n_epochs=args.epochs,
         patience=args.patience,
+        weight_decay=args.weight_decay,
+        lr_schedule=args.lr_schedule,
+        warmup_steps=args.warmup_steps,
+        gradient_clip=args.gradient_clip,
     )
 
     for step, sweep_name in enumerate(DEFAULT_ORDER, start=1):

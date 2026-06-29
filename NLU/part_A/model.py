@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import asdict, dataclass
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import torch
 import torch.nn as nn
@@ -20,9 +23,9 @@ class ModelConfig:
     eos_token_id: int
     pos_emb_size: int = 1024
     d_model: int = 128
-    n_heads: int = 4
-    num_layers: int = 2
-    ff_dim: int = 512
+    n_heads: int = 1
+    num_layers: int = 1
+    ff_dim: int = 1024
     dropout: float = 0.1
 
     def to_dict(self) -> dict[str, int | float]:

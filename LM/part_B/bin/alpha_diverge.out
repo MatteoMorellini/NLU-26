@@ -1,0 +1,225 @@
+Experiment: lora_r1_a2
+Device: cuda
+Base model: openai-community/gpt2
+Tokenizer vocab size: 50257
+Total parameters: 124495104
+Trainable LoRA parameters: 55296
+LoRA targets: query_key_value
+Hyperparameters: ExperimentConfig(name='lora_r1_a2', rank=1, alpha=2.0, learning_rate=0.0005, batch_size=64, eval_batch_size=128, max_length=128, n_epochs=100, patience=3, weight_decay=0.01, max_grad_norm=1.0, seed=42)
+LoRA init: A ~ N(0, 0.02), B = 0
+Seed: 42
+Pretrained dev ppl before LoRA updates: 247.26
+epoch=1 train_loss=3.9285 dev_loss=3.4968 dev_ppl=33.01
+epoch=2 train_loss=3.5739 dev_loss=3.4191 dev_ppl=30.54
+epoch=3 train_loss=3.5201 dev_loss=3.3882 dev_ppl=29.61
+epoch=4 train_loss=3.4931 dev_loss=3.3683 dev_ppl=29.03
+epoch=5 train_loss=3.4771 dev_loss=3.3563 dev_ppl=28.68
+epoch=6 train_loss=3.4642 dev_loss=3.3478 dev_ppl=28.44
+epoch=7 train_loss=3.4540 dev_loss=3.3393 dev_ppl=28.20
+epoch=8 train_loss=3.4486 dev_loss=3.3350 dev_ppl=28.08
+epoch=9 train_loss=3.4434 dev_loss=3.3293 dev_ppl=27.92
+epoch=10 train_loss=3.4397 dev_loss=3.3273 dev_ppl=27.86
+epoch=11 train_loss=3.4352 dev_loss=3.3222 dev_ppl=27.72
+epoch=12 train_loss=3.4334 dev_loss=3.3236 dev_ppl=27.76
+epoch=13 train_loss=3.4302 dev_loss=3.3200 dev_ppl=27.66
+epoch=14 train_loss=3.4257 dev_loss=3.3158 dev_ppl=27.54
+epoch=15 train_loss=3.4242 dev_loss=3.3134 dev_ppl=27.48
+epoch=16 train_loss=3.4230 dev_loss=3.3088 dev_ppl=27.35
+epoch=17 train_loss=3.4216 dev_loss=3.3095 dev_ppl=27.37
+epoch=18 train_loss=3.4195 dev_loss=3.3099 dev_ppl=27.38
+epoch=19 train_loss=3.4182 dev_loss=3.3062 dev_ppl=27.28
+epoch=20 train_loss=3.4159 dev_loss=3.3068 dev_ppl=27.30
+epoch=21 train_loss=3.4149 dev_loss=3.3025 dev_ppl=27.18
+epoch=22 train_loss=3.4137 dev_loss=3.3059 dev_ppl=27.27
+epoch=23 train_loss=3.4111 dev_loss=3.3026 dev_ppl=27.18
+epoch=24 train_loss=3.4105 dev_loss=3.3045 dev_ppl=27.23
+Best dev ppl: 27.18
+Test ppl: 24.31
+Saved best LoRA adapters to: /home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r1_a2.pt
+Experiment: lora_r2_a4
+Device: cuda
+Base model: openai-community/gpt2
+Tokenizer vocab size: 50257
+Total parameters: 124550400
+Trainable LoRA parameters: 110592
+LoRA targets: query_key_value
+Hyperparameters: ExperimentConfig(name='lora_r2_a4', rank=2, alpha=4.0, learning_rate=0.0005, batch_size=64, eval_batch_size=128, max_length=128, n_epochs=100, patience=3, weight_decay=0.01, max_grad_norm=1.0, seed=42)
+LoRA init: A ~ N(0, 0.02), B = 0
+Seed: 42
+Pretrained dev ppl before LoRA updates: 247.26
+epoch=1 train_loss=3.8209 dev_loss=3.4262 dev_ppl=30.76
+epoch=2 train_loss=3.4909 dev_loss=3.3456 dev_ppl=28.38
+epoch=3 train_loss=3.4299 dev_loss=3.3087 dev_ppl=27.35
+epoch=4 train_loss=3.3993 dev_loss=3.2900 dev_ppl=26.84
+epoch=5 train_loss=3.3814 dev_loss=3.2757 dev_ppl=26.46
+epoch=6 train_loss=3.3662 dev_loss=3.2651 dev_ppl=26.18
+epoch=7 train_loss=3.3539 dev_loss=3.2561 dev_ppl=25.95
+epoch=8 train_loss=3.3463 dev_loss=3.2506 dev_ppl=25.81
+epoch=9 train_loss=3.3398 dev_loss=3.2457 dev_ppl=25.68
+epoch=10 train_loss=3.3343 dev_loss=3.2421 dev_ppl=25.59
+epoch=11 train_loss=3.3293 dev_loss=3.2361 dev_ppl=25.43
+epoch=12 train_loss=3.3259 dev_loss=3.2363 dev_ppl=25.44
+epoch=13 train_loss=3.3212 dev_loss=3.2323 dev_ppl=25.34
+epoch=14 train_loss=3.3166 dev_loss=3.2274 dev_ppl=25.22
+epoch=15 train_loss=3.3144 dev_loss=3.2289 dev_ppl=25.25
+epoch=16 train_loss=3.3114 dev_loss=3.2223 dev_ppl=25.09
+epoch=17 train_loss=3.3092 dev_loss=3.2201 dev_ppl=25.03
+epoch=18 train_loss=3.3065 dev_loss=3.2202 dev_ppl=25.03
+epoch=19 train_loss=3.3045 dev_loss=3.2197 dev_ppl=25.02
+epoch=20 train_loss=3.3022 dev_loss=3.2201 dev_ppl=25.03
+epoch=21 train_loss=3.2996 dev_loss=3.2168 dev_ppl=24.95
+epoch=22 train_loss=3.2988 dev_loss=3.2173 dev_ppl=24.96
+epoch=23 train_loss=3.2955 dev_loss=3.2144 dev_ppl=24.89
+epoch=24 train_loss=3.2939 dev_loss=3.2157 dev_ppl=24.92
+epoch=25 train_loss=3.2931 dev_loss=3.2150 dev_ppl=24.90
+epoch=26 train_loss=3.2920 dev_loss=3.2093 dev_ppl=24.76
+epoch=27 train_loss=3.2910 dev_loss=3.2114 dev_ppl=24.81
+epoch=28 train_loss=3.2899 dev_loss=3.2119 dev_ppl=24.83
+epoch=29 train_loss=3.2897 dev_loss=3.2100 dev_ppl=24.78
+Best dev ppl: 24.76
+Test ppl: 22.37
+Saved best LoRA adapters to: /home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r2_a4.pt
+Experiment: lora_r4_a8
+Device: cuda
+Base model: openai-community/gpt2
+Tokenizer vocab size: 50257
+Total parameters: 124660992
+Trainable LoRA parameters: 221184
+LoRA targets: query_key_value
+Hyperparameters: ExperimentConfig(name='lora_r4_a8', rank=4, alpha=8.0, learning_rate=0.0005, batch_size=64, eval_batch_size=128, max_length=128, n_epochs=100, patience=3, weight_decay=0.01, max_grad_norm=1.0, seed=42)
+LoRA init: A ~ N(0, 0.02), B = 0
+Seed: 42
+Pretrained dev ppl before LoRA updates: 247.26
+epoch=1 train_loss=3.7258 dev_loss=3.3679 dev_ppl=29.02
+epoch=2 train_loss=3.4278 dev_loss=3.2923 dev_ppl=26.90
+epoch=3 train_loss=3.3735 dev_loss=3.2581 dev_ppl=26.00
+epoch=4 train_loss=3.3403 dev_loss=3.2379 dev_ppl=25.48
+epoch=5 train_loss=3.3180 dev_loss=3.2195 dev_ppl=25.01
+epoch=6 train_loss=3.2982 dev_loss=3.2063 dev_ppl=24.69
+epoch=7 train_loss=3.2818 dev_loss=3.1948 dev_ppl=24.41
+epoch=8 train_loss=3.2711 dev_loss=3.1899 dev_ppl=24.29
+epoch=9 train_loss=3.2597 dev_loss=3.1811 dev_ppl=24.07
+epoch=10 train_loss=3.2508 dev_loss=3.1777 dev_ppl=23.99
+epoch=11 train_loss=3.2429 dev_loss=3.1699 dev_ppl=23.80
+epoch=12 train_loss=3.2359 dev_loss=3.1683 dev_ppl=23.77
+epoch=13 train_loss=3.2292 dev_loss=3.1630 dev_ppl=23.64
+epoch=14 train_loss=3.2229 dev_loss=3.1563 dev_ppl=23.48
+epoch=15 train_loss=3.2185 dev_loss=3.1611 dev_ppl=23.60
+epoch=16 train_loss=3.2144 dev_loss=3.1506 dev_ppl=23.35
+epoch=17 train_loss=3.2106 dev_loss=3.1476 dev_ppl=23.28
+epoch=18 train_loss=3.2060 dev_loss=3.1477 dev_ppl=23.28
+epoch=19 train_loss=3.2031 dev_loss=3.1467 dev_ppl=23.26
+epoch=20 train_loss=3.1995 dev_loss=3.1478 dev_ppl=23.29
+epoch=21 train_loss=3.1955 dev_loss=3.1430 dev_ppl=23.17
+epoch=22 train_loss=3.1933 dev_loss=3.1430 dev_ppl=23.17
+epoch=23 train_loss=3.1891 dev_loss=3.1401 dev_ppl=23.11
+epoch=24 train_loss=3.1869 dev_loss=3.1412 dev_ppl=23.13
+epoch=25 train_loss=3.1853 dev_loss=3.1401 dev_ppl=23.11
+epoch=26 train_loss=3.1831 dev_loss=3.1339 dev_ppl=22.96
+epoch=27 train_loss=3.1814 dev_loss=3.1369 dev_ppl=23.03
+epoch=28 train_loss=3.1782 dev_loss=3.1342 dev_ppl=22.97
+epoch=29 train_loss=3.1772 dev_loss=3.1334 dev_ppl=22.95
+epoch=30 train_loss=3.1757 dev_loss=3.1330 dev_ppl=22.94
+epoch=31 train_loss=3.1739 dev_loss=3.1339 dev_ppl=22.96
+epoch=32 train_loss=3.1731 dev_loss=3.1317 dev_ppl=22.91
+epoch=33 train_loss=3.1707 dev_loss=3.1347 dev_ppl=22.98
+epoch=34 train_loss=3.1681 dev_loss=3.1302 dev_ppl=22.88
+epoch=35 train_loss=3.1680 dev_loss=3.1325 dev_ppl=22.93
+epoch=36 train_loss=3.1667 dev_loss=3.1306 dev_ppl=22.89
+epoch=37 train_loss=3.1656 dev_loss=3.1263 dev_ppl=22.79
+epoch=38 train_loss=3.1638 dev_loss=3.1288 dev_ppl=22.85
+epoch=39 train_loss=3.1623 dev_loss=3.1283 dev_ppl=22.83
+epoch=40 train_loss=3.1626 dev_loss=3.1286 dev_ppl=22.84
+Best dev ppl: 22.79
+Test ppl: 20.65
+Saved best LoRA adapters to: /home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r4_a8.pt
+Experiment: lora_r8_a16
+Device: cuda
+Base model: openai-community/gpt2
+Tokenizer vocab size: 50257
+Total parameters: 124882176
+Trainable LoRA parameters: 442368
+LoRA targets: query_key_value
+Hyperparameters: ExperimentConfig(name='lora_r8_a16', rank=8, alpha=16.0, learning_rate=0.0005, batch_size=64, eval_batch_size=128, max_length=128, n_epochs=100, patience=3, weight_decay=0.01, max_grad_norm=1.0, seed=42)
+LoRA init: A ~ N(0, 0.02), B = 0
+Seed: 42
+Pretrained dev ppl before LoRA updates: 247.26
+epoch=1 train_loss=3.6503 dev_loss=3.3240 dev_ppl=27.77
+epoch=2 train_loss=3.3808 dev_loss=3.2533 dev_ppl=25.88
+epoch=3 train_loss=3.3235 dev_loss=3.2156 dev_ppl=24.92
+epoch=4 train_loss=3.2836 dev_loss=3.1909 dev_ppl=24.31
+epoch=5 train_loss=3.2557 dev_loss=3.1695 dev_ppl=23.80
+epoch=6 train_loss=3.2310 dev_loss=3.1556 dev_ppl=23.47
+epoch=7 train_loss=3.2092 dev_loss=3.1432 dev_ppl=23.18
+epoch=8 train_loss=3.1931 dev_loss=3.1389 dev_ppl=23.08
+epoch=9 train_loss=3.1779 dev_loss=3.1258 dev_ppl=22.78
+epoch=10 train_loss=3.1655 dev_loss=3.1217 dev_ppl=22.69
+epoch=11 train_loss=3.1539 dev_loss=3.1145 dev_ppl=22.52
+epoch=12 train_loss=3.1437 dev_loss=3.1127 dev_ppl=22.48
+epoch=13 train_loss=3.1343 dev_loss=3.1065 dev_ppl=22.34
+epoch=14 train_loss=3.1259 dev_loss=3.1020 dev_ppl=22.24
+epoch=15 train_loss=3.1198 dev_loss=3.1035 dev_ppl=22.28
+epoch=16 train_loss=3.1126 dev_loss=3.0961 dev_ppl=22.11
+epoch=17 train_loss=3.1066 dev_loss=3.0909 dev_ppl=22.00
+epoch=18 train_loss=3.1009 dev_loss=3.0904 dev_ppl=21.99
+epoch=19 train_loss=3.0953 dev_loss=3.0871 dev_ppl=21.91
+epoch=20 train_loss=3.0907 dev_loss=3.0886 dev_ppl=21.95
+epoch=21 train_loss=3.0849 dev_loss=3.0842 dev_ppl=21.85
+epoch=22 train_loss=3.0817 dev_loss=3.0836 dev_ppl=21.84
+epoch=23 train_loss=3.0772 dev_loss=3.0796 dev_ppl=21.75
+epoch=24 train_loss=3.0733 dev_loss=3.0824 dev_ppl=21.81
+epoch=25 train_loss=3.0702 dev_loss=3.0796 dev_ppl=21.75
+epoch=26 train_loss=3.0667 dev_loss=3.0779 dev_ppl=21.71
+epoch=27 train_loss=3.0635 dev_loss=3.0773 dev_ppl=21.70
+epoch=28 train_loss=3.0601 dev_loss=3.0762 dev_ppl=21.67
+epoch=29 train_loss=3.0579 dev_loss=3.0772 dev_ppl=21.70
+epoch=30 train_loss=3.0553 dev_loss=3.0761 dev_ppl=21.67
+epoch=31 train_loss=3.0520 dev_loss=3.0760 dev_ppl=21.67
+epoch=32 train_loss=3.0511 dev_loss=3.0732 dev_ppl=21.61
+epoch=33 train_loss=3.0472 dev_loss=3.0771 dev_ppl=21.69
+epoch=34 train_loss=3.0445 dev_loss=3.0703 dev_ppl=21.55
+epoch=35 train_loss=3.0443 dev_loss=3.0733 dev_ppl=21.61
+epoch=36 train_loss=3.0423 dev_loss=3.0684 dev_ppl=21.51
+epoch=37 train_loss=3.0398 dev_loss=3.0682 dev_ppl=21.50
+epoch=38 train_loss=3.0382 dev_loss=3.0699 dev_ppl=21.54
+epoch=39 train_loss=3.0363 dev_loss=3.0709 dev_ppl=21.56
+epoch=40 train_loss=3.0351 dev_loss=3.0697 dev_ppl=21.54
+Best dev ppl: 21.50
+Test ppl: 19.54
+Saved best LoRA adapters to: /home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r8_a16.pt
+Experiment: lora_r16_a32
+Device: cuda
+Base model: openai-community/gpt2
+Tokenizer vocab size: 50257
+Total parameters: 125324544
+Trainable LoRA parameters: 884736
+LoRA targets: query_key_value
+Hyperparameters: ExperimentConfig(name='lora_r16_a32', rank=16, alpha=32.0, learning_rate=0.0005, batch_size=64, eval_batch_size=128, max_length=128, n_epochs=100, patience=3, weight_decay=0.01, max_grad_norm=1.0, seed=42)
+LoRA init: A ~ N(0, 0.02), B = 0
+Seed: 42
+Pretrained dev ppl before LoRA updates: 247.26
+epoch=1 train_loss=3.5886 dev_loss=3.2887 dev_ppl=26.81
+epoch=2 train_loss=3.3419 dev_loss=3.2172 dev_ppl=24.96
+epoch=3 train_loss=3.2755 dev_loss=3.1784 dev_ppl=24.01
+epoch=4 train_loss=3.2282 dev_loss=3.1510 dev_ppl=23.36
+epoch=5 train_loss=3.1929 dev_loss=3.1270 dev_ppl=22.81
+epoch=6 train_loss=3.1610 dev_loss=3.1114 dev_ppl=22.45
+epoch=7 train_loss=3.1339 dev_loss=3.0948 dev_ppl=22.08
+epoch=8 train_loss=3.1123 dev_loss=3.0870 dev_ppl=21.91
+epoch=9 train_loss=3.0918 dev_loss=3.0785 dev_ppl=21.72
+epoch=10 train_loss=3.0747 dev_loss=3.0737 dev_ppl=21.62
+epoch=11 train_loss=3.0592 dev_loss=3.0632 dev_ppl=21.40
+epoch=12 train_loss=3.0454 dev_loss=3.0621 dev_ppl=21.37
+epoch=13 train_loss=3.0325 dev_loss=3.0567 dev_ppl=21.26
+epoch=14 train_loss=3.0211 dev_loss=3.0507 dev_ppl=21.13
+epoch=15 train_loss=3.0122 dev_loss=3.0538 dev_ppl=21.20
+epoch=16 train_loss=3.0021 dev_loss=3.0472 dev_ppl=21.06
+epoch=17 train_loss=2.9927 dev_loss=3.0394 dev_ppl=20.89
+epoch=18 train_loss=2.9842 dev_loss=3.0473 dev_ppl=21.06
+epoch=19 train_loss=2.9770 dev_loss=3.0428 dev_ppl=20.96
+epoch=20 train_loss=2.9703 dev_loss=3.0441 dev_ppl=20.99
+Best dev ppl: 20.89
+Test ppl: 19.05
+Saved best LoRA adapters to: /home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r16_a32.pt
+Best LoRA configuration: name=lora_r16_a32 rank=16 alpha=32 dev_ppl=20.89 test_ppl=19.05
+Saved LoRA comparison metrics to: /home/matteo.morellini/NLU-26/LM/part_B/bin/lora_sweep_results.csv

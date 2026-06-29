@@ -1,0 +1,4 @@
+GPT2 (gpt2) | dev slot F1: 0.9670 | dev intent acc: 0.9920 | test slot F1: 0.9304 | test intent acc: 0.9675
+GPT2 (gpt2-medium) | dev slot F1: 0.9670 | dev intent acc: 0.9940 | test slot F1: 0.9221 | test intent acc: 0.9787
+BERT (bert-base-uncased) | dev slot F1: 0.9864 | dev intent acc: 0.9920 | test slot F1: 0.9564 | test intent acc: 0.9754
+BERT (bert-large-uncased) | dev slot F1: 0.9838 | dev intent acc: 0.9900 | test slot F1: 0.9591 | test intent acc: 0.9686

@@ -4,6 +4,7 @@ import math
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 from runtime_config import configure_runtime_environment
 
@@ -11,11 +12,14 @@ configure_runtime_environment()
 
 import torch
 from torch import nn
+from torch.optim import lr_scheduler
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 from utils import LanguageModelBatch
+
+LRSchedule = Literal["none", "linear", "cosine", "inverse_sqrt"]
 
 
 @dataclass(frozen=True)
@@ -46,11 +50,62 @@ def compute_language_modeling_loss(
     return criterion(logits.reshape(-1, vocab_size), labels.reshape(-1))
 
 
+def build_lr_scheduler(
+    optimizer: Optimizer,
+    schedule: LRSchedule,
+    warmup_steps: int,
+    total_steps: int,
+) -> lr_scheduler.LambdaLR | None:
+    """Build a step-wise LR scheduler with optional warmup."""
+
+    if schedule == "none":
+        return None
+    if warmup_steps < 0:
+        raise ValueError("warmup_steps must be non-negative")
+    if total_steps <= 0:
+        raise ValueError("total_steps must be positive")
+
+    warmup_steps = min(warmup_steps, total_steps)
+
+    def warmup_factor(step: int) -> float:
+        if warmup_steps == 0 or step >= warmup_steps:
+            return 1.0
+        return float(step + 1) / float(warmup_steps)
+
+    def lr_lambda(step: int) -> float:
+        if schedule == "linear":
+            if step < warmup_steps:
+                return warmup_factor(step)
+            decay_steps = max(1, total_steps - warmup_steps)
+            progress = float(step - warmup_steps) / float(decay_steps)
+            return max(0.0, 1.0 - progress)
+
+        if schedule == "cosine":
+            if step < warmup_steps:
+                return warmup_factor(step)
+            decay_steps = max(1, total_steps - warmup_steps)
+            progress = min(1.0, float(step - warmup_steps) / float(decay_steps))
+            return 0.5 * (1.0 + math.cos(math.pi * progress))
+
+        if schedule == "inverse_sqrt":
+            reference_step = max(1, warmup_steps)
+            current_step = max(1, step + 1)
+            if step < warmup_steps:
+                return warmup_factor(step)
+            return math.sqrt(reference_step / current_step)
+
+        raise ValueError(f"Unsupported LR schedule: {schedule}")
+
+    return lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+
+
 def train_loop(
     data: DataLoader[LanguageModelBatch],
     optimizer: Optimizer,
     criterion: nn.Module,
     model: nn.Module,
+    scheduler: lr_scheduler.LambdaLR | None = None,
+    gradient_clip: float | None = None,
 ) -> float:
     """Run one training epoch and return token-normalized loss."""
 
@@ -67,7 +122,11 @@ def train_loop(
         weighted_losses.append(float(loss.item()) * n_tokens)
         token_counts.append(n_tokens)
         loss.backward()
+        if gradient_clip is not None:
+            nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
         optimizer.step()
+        if scheduler is not None:
+            scheduler.step()
 
     return sum(weighted_losses) / sum(token_counts)
 
@@ -130,6 +189,8 @@ def fit_model(
     checkpoint_path: Path,
     n_epochs: int,
     patience: int,
+    scheduler: lr_scheduler.LambdaLR | None = None,
+    gradient_clip: float | None = None,
 ) -> TrainingResult:
     """Train with early stopping, save the best model, and evaluate on test data."""
 
@@ -138,7 +199,14 @@ def fit_model(
     remaining_patience = patience
 
     for epoch in range(1, n_epochs + 1):
-        train_loss = train_loop(train_loader, optimizer, criterion, model)
+        train_loss = train_loop(
+            train_loader,
+            optimizer,
+            criterion,
+            model,
+            scheduler=scheduler,
+            gradient_clip=gradient_clip,
+        )
         dev_result = eval_loop(valid_loader, criterion, model)
         print(
             f"epoch={epoch} train_loss={train_loss:.4f} "

@@ -13,6 +13,7 @@ def configure_runtime_environment(cache_dir: Path = DEFAULT_CACHE_DIR) -> None:
     os.environ.setdefault("HF_HOME", str(cache_dir))
     os.environ.setdefault("HF_HUB_CACHE", str(cache_dir / "hub"))
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 
 configure_runtime_environment()

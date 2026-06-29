@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import torch.nn as nn
 
@@ -30,6 +33,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-length", type=int, default=DEFAULT_MAX_LENGTH)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--slot-subtoken-strategy", choices=["first", "last"], default="first")
     return parser.parse_args()
 
 
@@ -49,6 +53,7 @@ def main() -> None:
         max_length=args.max_length,
         device=DEVICE,
         seed=args.seed,
+        slot_subtoken_strategy=args.slot_subtoken_strategy,
     )
 
     criterion_slots = nn.CrossEntropyLoss(ignore_index=-100)

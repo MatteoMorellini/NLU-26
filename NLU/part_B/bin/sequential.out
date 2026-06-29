@@ -1,0 +1,21 @@
+
+Starting sequential tuning for gpt2 (gpt2)
+
+Step 1: sweeping learning_rate
+
+gpt2 | learning_rate=1e-05 | seed=42 | lr=1e-05 batch=64 dropout=0.1 wd=0.01
+gpt2 learning_rate=1e-05 | dev slot F1=0.9620 | dev intent acc=0.9960 | test slot F1=0.9163
+
+gpt2 | learning_rate=2e-05 | seed=42 | lr=2e-05 batch=64 dropout=0.1 wd=0.01
+gpt2 learning_rate=2e-05 | dev slot F1=0.9629 | dev intent acc=0.9920 | test slot F1=0.9240
+
+gpt2 | learning_rate=3e-05 | seed=42 | lr=3e-05 batch=64 dropout=0.1 wd=0.01
+gpt2 learning_rate=3e-05 | dev slot F1=0.9667 | dev intent acc=0.9940 | test slot F1=0.9263
+
+gpt2 | learning_rate=5e-05 | seed=42 | lr=5e-05 batch=64 dropout=0.1 wd=0.01
+gpt2 learning_rate=5e-05 | dev slot F1=0.9661 | dev intent acc=0.9900 | test slot F1=0.9234
+Best after learning_rate: 3e-05 (dev slot F1=0.9667, dev intent acc=0.9940)
+
+Step 2: sweeping batch_size
+
+gpt2 | batch_size=8 | seed=42 | lr=3e-05 batch=8 dropout=0.1 wd=0.01

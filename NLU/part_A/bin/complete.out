@@ -1,0 +1,72 @@
+
+Sequential tuning step 1: learning_rate
+Starting from config: ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=256, n_heads=1, num_layers=1, ff_dim=1024, dropout=0.0)
+Starting from learning rate: 0.0005
+seq_lr_5em02: Dev Slot F1 0.033 +- 0.047; Dev Intent Acc 0.261 +- 0.369; Test Slot F1 0.031 +- 0.039; Test Intent Acc 0.262 +- 0.346
+seq_lr_1em02: Dev Slot F1 0.385 +- 0.072; Dev Intent Acc 0.774 +- 0.007; Test Slot F1 0.337 +- 0.065; Test Intent Acc 0.748 +- 0.011
+seq_lr_5em03: Dev Slot F1 0.570 +- 0.022; Dev Intent Acc 0.767 +- 0.013; Test Slot F1 0.520 +- 0.033; Test Intent Acc 0.747 +- 0.011
+seq_lr_1em03: Dev Slot F1 0.942 +- 0.002; Dev Intent Acc 0.969 +- 0.009; Test Slot F1 0.886 +- 0.005; Test Intent Acc 0.927 +- 0.008
+seq_lr_5em04: Dev Slot F1 0.947 +- 0.002; Dev Intent Acc 0.975 +- 0.006; Test Slot F1 0.893 +- 0.004; Test Intent Acc 0.947 +- 0.009
+seq_lr_1em04: Dev Slot F1 0.949 +- 0.004; Dev Intent Acc 0.982 +- 0.007; Test Slot F1 0.896 +- 0.002; Test Intent Acc 0.943 +- 0.008
+seq_lr_5em05: Dev Slot F1 0.950 +- 0.001; Dev Intent Acc 0.982 +- 0.000; Test Slot F1 0.898 +- 0.002; Test Intent Acc 0.943 +- 0.004
+seq_lr_1em05: Dev Slot F1 0.617 +- 0.436; Dev Intent Acc 0.656 +- 0.464; Test Slot F1 0.582 +- 0.409; Test Intent Acc 0.631 +- 0.444
+Best after learning_rate by dev Slot F1: seq_lr_5em05 dev_slot_f1=0.9501 dev_intent_acc=0.9819 test_slot_f1=0.8976 test_intent_acc=0.9433
+
+Sequential tuning step 2: d_model
+Starting from config: ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=256, n_heads=1, num_layers=1, ff_dim=1024, dropout=0.0)
+Starting from learning rate: 5e-05
+seq_d_model_64: Dev Slot F1 0.904 +- 0.019; Dev Intent Acc 0.980 +- 0.000; Test Slot F1 0.856 +- 0.021; Test Intent Acc 0.934 +- 0.004
+seq_d_model_128: Dev Slot F1 0.942 +- 0.008; Dev Intent Acc 0.979 +- 0.002; Test Slot F1 0.894 +- 0.007; Test Intent Acc 0.941 +- 0.002
+seq_d_model_256: Dev Slot F1 0.950 +- 0.001; Dev Intent Acc 0.982 +- 0.000; Test Slot F1 0.898 +- 0.002; Test Intent Acc 0.943 +- 0.004
+seq_d_model_384: Dev Slot F1 0.950 +- 0.003; Dev Intent Acc 0.983 +- 0.002; Test Slot F1 0.893 +- 0.005; Test Intent Acc 0.943 +- 0.002
+seq_d_model_512: Dev Slot F1 0.948 +- 0.004; Dev Intent Acc 0.980 +- 0.006; Test Slot F1 0.887 +- 0.001; Test Intent Acc 0.943 +- 0.002
+Best after d_model by dev Slot F1: seq_d_model_384 dev_slot_f1=0.9502 dev_intent_acc=0.9826 test_slot_f1=0.8928 test_intent_acc=0.9425
+
+Sequential tuning step 3: n_heads
+Starting from config: ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=384, n_heads=1, num_layers=1, ff_dim=1024, dropout=0.0)
+Starting from learning rate: 5e-05
+seq_n_heads_1: Dev Slot F1 0.950 +- 0.003; Dev Intent Acc 0.983 +- 0.002; Test Slot F1 0.893 +- 0.005; Test Intent Acc 0.943 +- 0.002
+seq_n_heads_2: Dev Slot F1 0.954 +- 0.002; Dev Intent Acc 0.985 +- 0.002; Test Slot F1 0.893 +- 0.005; Test Intent Acc 0.943 +- 0.001
+seq_n_heads_4: Dev Slot F1 0.952 +- 0.001; Dev Intent Acc 0.983 +- 0.001; Test Slot F1 0.890 +- 0.004; Test Intent Acc 0.943 +- 0.004
+seq_n_heads_8: Dev Slot F1 0.952 +- 0.001; Dev Intent Acc 0.982 +- 0.003; Test Slot F1 0.893 +- 0.004; Test Intent Acc 0.943 +- 0.006
+Skipping seq_n_heads_10: d_model=384 is not divisible by n_heads=10
+seq_n_heads_16: Dev Slot F1 0.947 +- 0.004; Dev Intent Acc 0.983 +- 0.003; Test Slot F1 0.891 +- 0.003; Test Intent Acc 0.944 +- 0.003
+Best after n_heads by dev Slot F1: seq_n_heads_2 dev_slot_f1=0.9539 dev_intent_acc=0.9853 test_slot_f1=0.8930 test_intent_acc=0.9425
+
+Sequential tuning step 4: num_layers
+Starting from config: ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=384, n_heads=2, num_layers=1, ff_dim=1024, dropout=0.0)
+Starting from learning rate: 5e-05
+seq_num_layers_1: Dev Slot F1 0.954 +- 0.002; Dev Intent Acc 0.985 +- 0.002; Test Slot F1 0.893 +- 0.005; Test Intent Acc 0.943 +- 0.001
+seq_num_layers_2: Dev Slot F1 0.950 +- 0.003; Dev Intent Acc 0.981 +- 0.005; Test Slot F1 0.887 +- 0.004; Test Intent Acc 0.937 +- 0.005
+seq_num_layers_4: Dev Slot F1 0.951 +- 0.002; Dev Intent Acc 0.983 +- 0.003; Test Slot F1 0.886 +- 0.003; Test Intent Acc 0.937 +- 0.003
+seq_num_layers_6: Dev Slot F1 0.951 +- 0.003; Dev Intent Acc 0.985 +- 0.003; Test Slot F1 0.889 +- 0.007; Test Intent Acc 0.934 +- 0.003
+seq_num_layers_8: Dev Slot F1 0.948 +- 0.002; Dev Intent Acc 0.983 +- 0.004; Test Slot F1 0.885 +- 0.003; Test Intent Acc 0.938 +- 0.003
+Best after num_layers by dev Slot F1: seq_num_layers_1 dev_slot_f1=0.9539 dev_intent_acc=0.9853 test_slot_f1=0.8930 test_intent_acc=0.9425
+
+Sequential tuning step 5: ff_dim
+Starting from config: ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=384, n_heads=2, num_layers=1, ff_dim=1024, dropout=0.0)
+Starting from learning rate: 5e-05
+seq_ff_dim_64: Dev Slot F1 0.948 +- 0.002; Dev Intent Acc 0.979 +- 0.001; Test Slot F1 0.892 +- 0.005; Test Intent Acc 0.940 +- 0.004
+seq_ff_dim_128: Dev Slot F1 0.945 +- 0.004; Dev Intent Acc 0.983 +- 0.002; Test Slot F1 0.888 +- 0.005; Test Intent Acc 0.947 +- 0.003
+seq_ff_dim_256: Dev Slot F1 0.951 +- 0.005; Dev Intent Acc 0.979 +- 0.002; Test Slot F1 0.891 +- 0.001; Test Intent Acc 0.945 +- 0.001
+seq_ff_dim_512: Dev Slot F1 0.953 +- 0.002; Dev Intent Acc 0.983 +- 0.001; Test Slot F1 0.894 +- 0.002; Test Intent Acc 0.943 +- 0.002
+seq_ff_dim_1024: Dev Slot F1 0.954 +- 0.002; Dev Intent Acc 0.985 +- 0.002; Test Slot F1 0.893 +- 0.005; Test Intent Acc 0.943 +- 0.001
+seq_ff_dim_2048: Dev Slot F1 0.953 +- 0.003; Dev Intent Acc 0.982 +- 0.002; Test Slot F1 0.894 +- 0.004; Test Intent Acc 0.945 +- 0.001
+Best after ff_dim by dev Slot F1: seq_ff_dim_1024 dev_slot_f1=0.9539 dev_intent_acc=0.9853 test_slot_f1=0.8930 test_intent_acc=0.9425
+
+Sequential tuning step 6: dropout
+Starting from config: ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=384, n_heads=2, num_layers=1, ff_dim=1024, dropout=0.0)
+Starting from learning rate: 5e-05
+seq_dropout_0.0: Dev Slot F1 0.954 +- 0.002; Dev Intent Acc 0.985 +- 0.002; Test Slot F1 0.893 +- 0.005; Test Intent Acc 0.943 +- 0.001
+seq_dropout_0.1: Dev Slot F1 0.942 +- 0.008; Dev Intent Acc 0.984 +- 0.003; Test Slot F1 0.890 +- 0.008; Test Intent Acc 0.950 +- 0.004
+seq_dropout_0.2: Dev Slot F1 0.939 +- 0.014; Dev Intent Acc 0.987 +- 0.001; Test Slot F1 0.893 +- 0.011; Test Intent Acc 0.944 +- 0.008
+seq_dropout_0.3: Dev Slot F1 0.939 +- 0.003; Dev Intent Acc 0.981 +- 0.003; Test Slot F1 0.892 +- 0.002; Test Intent Acc 0.944 +- 0.005
+seq_dropout_0.4: Dev Slot F1 0.896 +- 0.013; Dev Intent Acc 0.979 +- 0.003; Test Slot F1 0.845 +- 0.014; Test Intent Acc 0.941 +- 0.003
+Best after dropout by dev Slot F1: seq_dropout_0.0 dev_slot_f1=0.9539 dev_intent_acc=0.9853 test_slot_f1=0.8930 test_intent_acc=0.9425
+
+Final sequential best config:
+ModelConfig(vocab_size=50257, slots_size=129, n_intents=26, pad_token_id=50256, eos_token_id=50256, pos_emb_size=1024, d_model=384, n_heads=2, num_layers=1, ff_dim=1024, dropout=0.0)
+Learning rate: 5e-05
+
+Last subtoken: 
+final_complete_last_subtoken: Dev Slot F1 0.953 +- 0.001; Dev Intent Acc 0.980 +- 0.000; Test Slot F1 0.904 +- 0.004; Test Intent Acc 0.940 +- 0.002

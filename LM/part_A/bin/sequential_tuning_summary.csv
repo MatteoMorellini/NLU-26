@@ -1,0 +1,5 @@
+step,sweep,name,d_model,n_heads,num_layers,ff_dim,learning_rate,seed,best_dev_ppl,test_ppl
+1,d_model,seq_d_model_512,512,1,1,2048,0.0005,42,38.1494,34.3546
+2,n_heads,seq_n_heads_8,512,8,1,2048,0.0005,42,37.0104,33.5244
+3,num_layers,seq_num_layers_10,512,8,10,2048,0.0003,42,36.6211,32.8989
+4,ff_dim,seq_ff_dim_3072,512,8,10,3072,0.0005,42,39.4507,35.5295

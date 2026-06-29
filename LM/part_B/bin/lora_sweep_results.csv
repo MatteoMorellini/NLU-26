@@ -1,0 +1,6 @@
+name,lora_targets,rank,alpha,learning_rate,pretrained_dev_ppl,best_dev_ppl,test_ppl,total_parameters,trainable_parameters,checkpoint_path
+lora_r1_a2,query_key_value,1,2.0,0.0005,247.26230993283338,27.181595253633688,24.307593869171395,124495104,55296,/home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r1_a2.pt
+lora_r2_a4,query_key_value,2,4.0,0.0005,247.26230993283338,24.762553569026135,22.37314327793685,124550400,110592,/home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r2_a4.pt
+lora_r4_a8,query_key_value,4,8.0,0.0005,247.26230993283338,22.790265609491946,20.651866582326164,124660992,221184,/home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r4_a8.pt
+lora_r8_a16,query_key_value,8,16.0,0.0005,247.26230993283338,21.502336793655335,19.53873083942572,124882176,442368,/home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r8_a16.pt
+lora_r16_a32,query_key_value,16,32.0,0.0005,247.26230993283338,20.89291741877331,19.048409055769394,125324544,884736,/home/matteo.morellini/NLU-26/LM/part_B/bin/lora_r16_a32.pt

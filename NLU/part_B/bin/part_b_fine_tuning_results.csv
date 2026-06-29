@@ -1,0 +1,5 @@
+model_type,pretrained_model_name,seed,learning_rate,best_dev_slot_f1,best_dev_intent_accuracy,test_slot_f1,test_intent_accuracy,epochs_ran,checkpoint_path
+gpt2,gpt2,42,5e-05,0.967020023557126,0.9919678714859438,0.9304363062905203,0.9675251959686451,17,/home/matteo.morellini/NLU-26/NLU/part_B/bin/best_gpt2_gpt2.pt
+gpt2,gpt2-medium,42,5e-05,0.967020023557126,0.9939759036144579,0.9221368715083799,0.9787234042553191,16,/home/matteo.morellini/NLU-26/NLU/part_B/bin/best_gpt2_gpt2-medium.pt
+bert,bert-base-uncased,42,5e-05,0.9864146485528648,0.9919678714859438,0.956368754398311,0.975363941769317,15,/home/matteo.morellini/NLU-26/NLU/part_B/bin/best_bert_bert-base-uncased.pt
+bert,bert-large-uncased,42,5e-05,0.9837710239008557,0.9899598393574297,0.9590725452309854,0.9686450167973124,13,/home/matteo.morellini/NLU-26/NLU/part_B/bin/best_bert_bert-large-uncased.pt

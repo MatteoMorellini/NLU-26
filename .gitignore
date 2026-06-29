@@ -4,8 +4,7 @@ __pycache__/
 **/hf_cache/
 **/.cache/
 
-**/bin/
 *.pt
 *.pth
-
-NLU/part_A/dataset/
+*.sh
+**/dataset/

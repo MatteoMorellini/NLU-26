@@ -1,0 +1,4 @@
+name,seed,learning_rate,d_model,n_heads,num_layers,ff_dim,dropout,best_dev_slot_f1,best_dev_intent_accuracy,test_slot_f1,test_intent_accuracy,epochs_ran,checkpoint_path
+final_complete_last_subtoken,42,5e-05,384,2,1,1024,0.0,0.9536736500442609,0.9799196787148594,0.9061568145939308,0.9406494960806271,31,/home/matteo.morellini/NLU-26/NLU/part_A/bin/final_complete_last_subtoken_seed_42.pt
+final_complete_last_subtoken,101,5e-05,384,2,1,1024,0.0,0.9511477339611536,0.9799196787148594,0.8982098982098983,0.9417693169092946,28,/home/matteo.morellini/NLU-26/NLU/part_A/bin/final_complete_last_subtoken_seed_101.pt
+final_complete_last_subtoken,27,5e-05,384,2,1,1024,0.0,0.9540636042402827,0.9799196787148594,0.906830122591944,0.9361702127659575,31,/home/matteo.morellini/NLU-26/NLU/part_A/bin/final_complete_last_subtoken_seed_27.pt

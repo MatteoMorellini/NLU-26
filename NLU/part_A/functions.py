@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import copy
 import csv
-import re
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Literal
+
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import numpy as np
 import torch
@@ -15,6 +17,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
+from conll import evaluate
 from model import GPT2IntentSlotModel, ModelConfig, build_model
 from utils import Batch, DEVICE, LabelVocab, set_seed
 
@@ -209,8 +212,8 @@ def eval_loop(
             intent_total += int(batch["intent_labels"].numel())
 
             pred_slots = torch.argmax(slots, dim=2).detach().cpu()
-            first_masks = batch["first_subtoken_mask"].detach().cpu()
-            _extend_slot_predictions(batch, pred_slots, first_masks, id2slot, ref_slots, hyp_slots)
+            slot_masks = batch["slot_subtoken_mask"].detach().cpu()
+            _extend_slot_predictions(batch, pred_slots, slot_masks, id2slot, ref_slots, hyp_slots)
 
     slot_scores = evaluate(ref_slots, hyp_slots)
     return EvaluationResult(
@@ -223,7 +226,7 @@ def eval_loop(
 def _extend_slot_predictions(
     batch: Batch,
     pred_slots: torch.Tensor,
-    first_masks: torch.Tensor,
+    slot_masks: torch.Tensor,
     id2slot: dict[int, str],
     ref_slots: list[list[tuple[str, str]]],
     hyp_slots: list[list[tuple[str, str]]],
@@ -232,7 +235,7 @@ def _extend_slot_predictions(
 
     for row, words in enumerate(batch["words"]):
         refs = batch["word_slot_labels"][row]
-        pred_ids = pred_slots[row][first_masks[row]].tolist()
+        pred_ids = pred_slots[row][slot_masks[row]].tolist()
         usable_len = min(len(words), len(refs), len(pred_ids))
         ref_slots.append([(words[i], refs[i]) for i in range(usable_len)])
         hyp_slots.append([(words[i], id2slot[int(pred_ids[i])]) for i in range(usable_len)])
@@ -388,133 +391,3 @@ def write_aggregate_results(results: Iterable[AggregateExperimentResult], output
         writer = csv.DictWriter(file, fieldnames=list(rows[0].keys()))
         writer.writeheader()
         writer.writerows(rows)
-
-
-def stats() -> dict[str, int]:
-    """Create a CoNLL counter."""
-
-    return {"cor": 0, "hyp": 0, "ref": 0}
-
-
-def evaluate(ref: list[list[tuple[str, str]]], hyp: list[list[tuple[str, str]]], otag: str = "O"):
-    """Evaluate slot chunks with CoNLL-style span F1."""
-
-    return conlleval(align_hyp(ref, hyp), otag=otag)
-
-
-def align_hyp(ref: list[list[tuple[str, str]]], hyp: list[list[tuple[str, str]]]):
-    """Align reference and hypothesis labels."""
-
-    if len(ref) != len(hyp):
-        raise ValueError(f"Size mismatch: ref={len(ref)} hyp={len(hyp)}")
-
-    out = []
-    for idx in range(len(ref)):
-        if len(ref[idx]) != len(hyp[idx]):
-            raise ValueError(f"Size mismatch at sentence {idx}: ref={len(ref[idx])} hyp={len(hyp[idx])}")
-        out.append([(*ref[idx][j], hyp[idx][j][-1]) for j in range(len(ref[idx]))])
-    return out
-
-
-def conlleval(data, otag: str = "O"):
-    """Compute CoNLL chunk-level scores."""
-
-    seg = stats()
-    cls: dict[str | None, dict[str, int]] = {}
-
-    for sent in data:
-        prev_ref = otag
-        prev_hyp = otag
-        prev_ref_iob = None
-        prev_hyp_iob = None
-        in_correct = False
-
-        for token in sent:
-            hyp_iob, hyp = parse_iob(token[-1])
-            ref_iob, ref = parse_iob(token[-2])
-            ref_e = is_eoc(ref, ref_iob, prev_ref, prev_ref_iob, otag)
-            hyp_e = is_eoc(hyp, hyp_iob, prev_hyp, prev_hyp_iob, otag)
-            ref_b = is_boc(ref, ref_iob, prev_ref, prev_ref_iob, otag)
-            hyp_b = is_boc(hyp, hyp_iob, prev_hyp, prev_hyp_iob, otag)
-
-            if ref not in cls and ref:
-                cls[ref] = stats()
-            if hyp not in cls and hyp:
-                cls[hyp] = stats()
-
-            if in_correct:
-                if ref_e and hyp_e and prev_hyp == prev_ref:
-                    in_correct = False
-                    seg["cor"] += 1
-                    cls[prev_ref]["cor"] += 1
-                elif ref_e != hyp_e or hyp != ref:
-                    in_correct = False
-
-            if ref_b and hyp_b and hyp == ref:
-                in_correct = True
-            if ref_b:
-                seg["ref"] += 1
-                cls[ref]["ref"] += 1
-            if hyp_b:
-                seg["hyp"] += 1
-                cls[hyp]["hyp"] += 1
-
-            prev_ref = ref
-            prev_hyp = hyp
-            prev_ref_iob = ref_iob
-            prev_hyp_iob = hyp_iob
-
-        if in_correct:
-            seg["cor"] += 1
-            cls[prev_ref]["cor"] += 1
-
-    return summarize(seg, cls)
-
-
-def parse_iob(tag: str) -> tuple[str, str | None]:
-    """Split an IOB tag into prefix and chunk label."""
-
-    match = re.match(r"^([^-]*)-(.*)$", tag)
-    return match.groups() if match else (tag, None)
-
-
-def is_boc(lbl: str | None, iob: str, prev_lbl: str | None, prev_iob: str | None, otag: str = "O") -> bool:
-    """Return whether the current tag starts a chunk."""
-
-    return (
-        iob in ["B", "S", "U"]
-        or (iob in ["E", "L"] and prev_iob in ["E", "L", "S", otag])
-        or (iob == "I" and prev_iob in ["S", "L", "E", otag])
-        or (lbl != prev_lbl and iob != otag and iob != ".")
-        or iob in ["[", "]"]
-    )
-
-
-def is_eoc(lbl: str | None, iob: str, prev_lbl: str | None, prev_iob: str | None, otag: str = "O") -> bool:
-    """Return whether the current tag ends the previous chunk."""
-
-    return (
-        iob in ["E", "L", "S", "U"]
-        or (iob == "B" and prev_iob in ["B", "I"])
-        or (iob in ["S", "U"] and prev_iob in ["B", "I"])
-        or (iob == otag and prev_iob in ["B", "I"])
-        or (lbl != prev_lbl and iob != otag and prev_iob != ".")
-        or iob in ["[", "]"]
-    )
-
-
-def score(cor_cnt: int, hyp_cnt: int, ref_cnt: int) -> dict[str, float | int]:
-    """Compute precision, recall, F1, and support."""
-
-    precision = 1.0 if hyp_cnt == 0 else cor_cnt / hyp_cnt
-    recall = 0.0 if ref_cnt == 0 else cor_cnt / ref_cnt
-    f1 = 0.0 if precision + recall == 0 else (2 * precision * recall) / (precision + recall)
-    return {"p": precision, "r": recall, "f": f1, "s": ref_cnt}
-
-
-def summarize(seg: dict[str, int], cls: dict[str | None, dict[str, int]]):
-    """Summarize CoNLL scores."""
-
-    res = {label: score(cls[label]["cor"], cls[label]["hyp"], cls[label]["ref"]) for label in cls}
-    res.update({"total": score(seg.get("cor", 0), seg.get("hyp", 0), seg.get("ref", 0))})
-    return res

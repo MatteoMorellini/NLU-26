@@ -33,44 +33,64 @@ BASE_CONFIG = ExperimentConfig(
     n_heads=8,
     num_layers=10,
     ff_dim=3072,
-    dropout=0.0,
+    dropout=0.3,
     n_epochs=100,
     patience=3,
     seed=42,
 )
 
 SWEEPS: dict[str, tuple[dict[str, Any], ...]] = {
-    "d_model": (
-        {"d_model": 256, "ff_dim": 1024, "learning_rate": 8e-4},
-        {"d_model": 384, "ff_dim": 1536, "learning_rate": 6e-4},
-        {"d_model": 512, "ff_dim": 2048, "learning_rate": 5e-4},
-        {"d_model": 768, "ff_dim": 3072, "learning_rate": 5e-4},
+    # "d_model": (
+    #     {"d_model": 256, "ff_dim": 1024, "learning_rate": 8e-4},
+    #     {"d_model": 384, "ff_dim": 1536, "learning_rate": 6e-4},
+    #     {"d_model": 512, "ff_dim": 2048, "learning_rate": 5e-4},
+    #     {"d_model": 768, "ff_dim": 3072, "learning_rate": 5e-4},
+    # ),
+    # "n_heads": (
+    #     {"n_heads": 2},
+    #     {"n_heads": 4},
+    #     {"n_heads": 8},
+    #     {"n_heads": 16},
+    # ),
+    # "num_layers": (
+    #     {"num_layers": 6, "learning_rate": 5e-4},
+    #     {"num_layers": 8, "learning_rate": 5e-4},
+    #     {"num_layers": 10, "learning_rate": 3e-4},
+    # ),
+    # "ff_dim": (
+    #     {"ff_dim": 1024, "learning_rate": 8e-4},
+    #     {"ff_dim": 2048, "learning_rate": 7e-4},
+    #     {"ff_dim": 3072, "learning_rate": 5e-4},
+    # ),
+    # "dropout": (
+    #     {"dropout": 0.0},
+    #     {"dropout": 0.1},
+    #     {"dropout": 0.2},
+    #     {"dropout": 0.3},
+    #     {"dropout": 0.4},
+    # ),
+    "weight_decay": (
+        {"weight_decay": 0.0},
+        {"weight_decay": 0.001},
+        {"weight_decay": 0.01},
+        {"weight_decay": 0.05},
+        {"weight_decay": 0.1},
     ),
-    "n_heads": (
-        {"n_heads": 2},
-        {"n_heads": 4},
-        {"n_heads": 8},
-        {"n_heads": 16},
+    "lr_schedule": (
+        {"lr_schedule": "none"},
+        {"lr_schedule": "linear"},
+        {"lr_schedule": "cosine"},
+        {"lr_schedule": "inverse_sqrt"},
     ),
-    "num_layers": (
-        {"num_layers": 6, "learning_rate": 5e-4},
-        {"num_layers": 8, "learning_rate": 5e-4},
-        {"num_layers": 10, "learning_rate": 3e-4},
-    ),
-    "ff_dim": (
-        {"ff_dim": 1024, "learning_rate": 8e-4},
-        {"ff_dim": 2048, "learning_rate": 7e-4},
-        {"ff_dim": 3072, "learning_rate": 5e-4},
-    ),
-    "dropout": (
-        {"dropout": 0.0},
-        {"dropout": 0.1},
-        {"dropout": 0.2},
-        {"dropout": 0.3},
-        {"dropout": 0.4},
+    "warmup_steps": (
+        {"warmup_steps": 0},
+        {"warmup_steps": 50},
+        {"warmup_steps": 100},
+        {"warmup_steps": 200},
+        {"warmup_steps": 500},
     ),
 }
-SEQUENTIAL_SWEEP_ORDER = ("d_model", "n_heads", "num_layers", "ff_dim", "dropout")
+SEQUENTIAL_SWEEP_ORDER = ("weight_decay", "lr_schedule", "warmup_steps")
 
 
 def parse_args() -> Namespace:
@@ -104,7 +124,43 @@ def parse_args() -> Namespace:
         default=Path("tuning_results.csv"),
         help="CSV file where trial results are appended.",
     )
+    parser.add_argument(
+        "--weight-decay",
+        type=float,
+        default=BASE_CONFIG.weight_decay,
+        help="Weight decay used by AdamW.",
+    )
+    parser.add_argument(
+        "--lr-schedule",
+        choices=("none", "linear", "cosine", "inverse_sqrt"),
+        default=BASE_CONFIG.lr_schedule,
+        help="Step-wise learning-rate schedule used during training.",
+    )
+    parser.add_argument(
+        "--warmup-steps",
+        type=int,
+        default=BASE_CONFIG.warmup_steps,
+        help="Number of optimizer steps used for LR warmup.",
+    )
+    parser.add_argument(
+        "--gradient-clip",
+        type=float,
+        default=BASE_CONFIG.gradient_clip,
+        help="Max gradient norm. Leave unset to disable clipping.",
+    )
     return parser.parse_args()
+
+
+def config_with_training_flags(config: ExperimentConfig, args: Namespace) -> ExperimentConfig:
+    """Apply training schedule, regularization, and clipping flags to a config."""
+
+    return replace(
+        config,
+        weight_decay=args.weight_decay,
+        lr_schedule=args.lr_schedule,
+        warmup_steps=args.warmup_steps,
+        gradient_clip=args.gradient_clip,
+    )
 
 
 def config_for_trial(
@@ -118,10 +174,14 @@ def config_for_trial(
     """Create a named experiment config for one sweep trial."""
 
     tuned_value = trial[sweep_name]
+    trial_values = dict(trial)
+    if sweep_name == "d_model":
+        trial_values["ff_dim"] = 4 * int(tuned_value)
+
     name = f"{name_prefix}_{sweep_name}_{tuned_value}"
     return replace(
         base_config,
-        **trial,
+        **trial_values,
         name=name,
         n_epochs=epochs,
         patience=patience,
@@ -157,6 +217,10 @@ def append_result(output_path: Path, sweep_name: str, config: ExperimentConfig, 
         "ff_dim",
         "dropout",
         "tie_weights",
+        "weight_decay",
+        "lr_schedule",
+        "warmup_steps",
+        "gradient_clip",
         "learning_rate",
         "seed",
         "best_dev_ppl",
@@ -193,6 +257,10 @@ def append_result(output_path: Path, sweep_name: str, config: ExperimentConfig, 
                 "ff_dim": config.ff_dim,
                 "dropout": config.dropout,
                 "tie_weights": config.tie_weights,
+                "weight_decay": config.weight_decay,
+                "lr_schedule": config.lr_schedule,
+                "warmup_steps": config.warmup_steps,
+                "gradient_clip": config.gradient_clip,
                 "learning_rate": config.learning_rate,
                 "seed": config.seed,
                 "best_dev_ppl": f"{dev_ppl:.4f}",
@@ -243,6 +311,7 @@ def run_sequential_sweeps(args: Namespace, vocab_size: int) -> ExperimentConfig:
         n_epochs=args.epochs,
         patience=args.patience,
     )
+    current_base = config_with_training_flags(current_base, args)
     for step_idx, sweep_name in enumerate(SEQUENTIAL_SWEEP_ORDER, start=1):
         best_config: Optional[ExperimentConfig] = None
         best_dev_ppl = float("inf")
@@ -289,12 +358,13 @@ def main() -> None:
         return
 
     selected_sweeps = SWEEPS if args.sweep == "all" else {args.sweep: SWEEPS[args.sweep]}
+    base_config = config_with_training_flags(BASE_CONFIG, args)
     for sweep_name, trials in selected_sweeps.items():
         for trial in trials:
             run_trial(
                 sweep_name=sweep_name,
                 trial=trial,
-                base_config=BASE_CONFIG,
+                base_config=base_config,
                 args=args,
                 vocab_size=vocab_size,
             )

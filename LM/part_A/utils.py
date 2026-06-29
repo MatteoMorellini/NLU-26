@@ -8,6 +8,8 @@ from runtime_config import DEFAULT_CACHE_DIR
 
 IGNORE_INDEX = -100
 PTB_EOS_TOKEN = "<eos>"
+PART_DIR = Path(__file__).resolve().parent
+DEFAULT_DATASET_DIR = PART_DIR / "dataset" / "PennTreeBank"
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -59,7 +61,7 @@ class PennTreeBankDataset(Dataset[list[int]]):
         return self.sentences[idx]
 
 
-def get_dataset_paths(dataset_dir: Path = Path("dataset/PennTreeBank")) -> DatasetPaths:
+def get_dataset_paths(dataset_dir: Path = DEFAULT_DATASET_DIR) -> DatasetPaths:
     """Return the expected Penn Treebank split paths."""
 
     return DatasetPaths(
@@ -131,7 +133,7 @@ def build_dataloaders(
     batch_size: int,
     eval_batch_size: int,
     device: torch.device,
-    dataset_dir: Path = Path("dataset/PennTreeBank"),
+    dataset_dir: Path = DEFAULT_DATASET_DIR,
     max_length: int = 1024,
     seed: int = 42,
 ) -> tuple[PreTrainedTokenizerBase, DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch], DataLoader[LanguageModelBatch]]:
